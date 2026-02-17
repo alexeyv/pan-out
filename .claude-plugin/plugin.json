@@ -1,0 +1,14 @@
+{
+  "name": "pan-out",
+  "version": "0.1.0",
+  "description": "AI-guided cooking — research dishes, execute protocols in real time, and learn from every cook",
+  "author": {
+    "name": "Alex Verkhovsky",
+    "email": "alexey.verkhovsky@gmail.com",
+    "url": "https://github.com/alexeyv"
+  },
+  "repository": "https://github.com/alexeyv/pan-out",
+  "homepage": "https://github.com/alexeyv/pan-out",
+  "license": "MIT",
+  "keywords": ["cooking", "recipes", "sous-chef", "protocols", "food-science"]
+}
