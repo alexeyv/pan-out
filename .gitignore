@@ -1,0 +1,24 @@
+# === Agent / IDE Scaffolding ===
+.claude/
+.codex/
+.agent/
+_bmad/
+_bmad-output/
+
+# Session, memory, config, plans (local working state)
+sessions/
+memory/
+config/
+plans/
+
+# === Not yet publishable ===
+# TODO: unignore when there are stable, publishable tests and docs
+test/
+docs/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
