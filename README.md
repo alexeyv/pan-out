@@ -116,6 +116,10 @@ Each cook makes the recipe better. The debrief skill captures timing adjustments
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Acknowledgments
+
+Pan Out's skill structure, workflow patterns, and prompt language were built with and heavily inspired by the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) by BMad Code, LLC ([MIT](https://github.com/bmad-code-org/BMAD-METHOD/blob/main/LICENSE)).
+
 ## License
 
 [MIT](LICENSE)
