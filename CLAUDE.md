@@ -1,5 +1,7 @@
 # Project Instructions
 
-## Git Commits
+**Always invoke `/tam-commit` before creating any git commit.** No exceptions.
 
-**Always invoke `/tam-commit` before creating any git commit.** No exceptions. This loads the commit conventions (conventional commits, no AI signatures).
+## Skill Paths
+
+Bare paths in SKILL.md resolve relative to the SKILL.md file. `{project-root}` = user's CWD. `{installed_path}` = skill install location.
