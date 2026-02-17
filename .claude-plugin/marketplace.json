@@ -1,0 +1,29 @@
+{
+  "name": "pan-out-marketplace",
+  "description": "Cooking protocol skills for Claude Code",
+  "owner": {
+    "name": "Alex Verkhovsky",
+    "email": "alexey.verkhovsky@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "pan-out",
+      "source": {
+        "source": "github",
+        "repo": "alexeyv/pan-out",
+        "ref": "v0.1.0"
+      },
+      "description": "AI-guided cooking — research dishes, execute protocols in real time, and learn from every cook",
+      "version": "0.1.0",
+      "author": {
+        "name": "Alex Verkhovsky",
+        "email": "alexey.verkhovsky@gmail.com"
+      },
+      "homepage": "https://github.com/alexeyv/pan-out",
+      "repository": "https://github.com/alexeyv/pan-out",
+      "license": "MIT",
+      "keywords": ["cooking", "recipes", "sous-chef", "protocols", "food-science"],
+      "category": "lifestyle"
+    }
+  ]
+}

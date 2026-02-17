@@ -12,25 +12,46 @@ Pan Out is a collection of AI agent skills that turn [Claude Code](https://claud
 
 The system is built around **protocols** -- YAML "flight plans" that encode everything needed to execute a dish: ingredients, phases, timing, temperatures, sensory cues, and the science behind each step.
 
-## Quick Start
+## Installation
 
-### Prerequisites
+### As a Plugin (recommended)
 
-- [Claude Code](https://claude.ai/claude-code) CLI
-- macOS (for TTS via `say`) or Linux with `espeak`
-- Optional: thermocouple and/or IR thermometer
+In any Claude Code session:
 
-### Setup
+```
+/plugin marketplace add alexeyv/pan-out
+/plugin install pan-out@pan-out-marketplace
+```
+
+Then create your personal reference files:
+
+```
+cp references/cook-profile.example.md references/cook-profile.md
+cp references/calibration.example.md references/calibration.md
+```
+
+Edit `references/cook-profile.md` with your equipment, preferences, and kitchen environment. If you have temperature instruments, run a boiling-water calibration and fill in `references/calibration.md`.
+
+### From Source
 
 1. Clone this repo
-2. Copy and customize your personal reference files:
+2. Run Claude Code with the plugin flag:
+   ```
+   claude --plugin-dir ./pan-out
+   ```
+3. Copy and customize your personal reference files:
    ```
    cp references/cook-profile.example.md references/cook-profile.md
    cp references/calibration.example.md references/calibration.md
    ```
-3. Edit `references/cook-profile.md` with your equipment, preferences, and kitchen environment
-4. If you have temperature instruments, run a boiling-water calibration and fill in `references/calibration.md`
-5. Open Claude Code in this directory
+4. Edit `references/cook-profile.md` with your equipment, preferences, and kitchen environment
+5. If you have temperature instruments, run a boiling-water calibration and fill in `references/calibration.md`
+
+### Prerequisites
+
+- [Claude Code](https://claude.ai/claude-code) CLI v1.0.33+
+- macOS (for TTS via `say`) or Linux with `espeak`
+- Optional: thermocouple and/or IR thermometer
 
 ### Usage
 
