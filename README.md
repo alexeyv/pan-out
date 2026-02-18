@@ -48,9 +48,11 @@ Edit `references/cook-profile.md` with your equipment, preferences, and kitchen 
 ### Prerequisites
 
 - [Claude Code](https://claude.ai/claude-code) v1.0.33 or later
-- macOS or Linux (so it can talk to you while you cook)
 - An instant-read probe thermometer — for checking liquid temps, meat doneness, and food safety. Practically a must.
 - An infrared (IR) thermometer — point-and-shoot surface temp readings for searing and high-heat work. Really nice to have.
+- A dictation app like [Wispr Flow](https://wisprflow.com) — strongly recommended. Typing mid-cook is slow and distracting; dictation lets you wipe your hands, hold a button, say what you need, and let go — much faster than typing.
+
+Works on macOS, Linux, and Windows. Voice output (Pan Out talking back to you) is currently macOS and Linux only — on Windows you'll read instructions on screen instead. Dictation and voice are both optional, but they make the cooking experience much smoother.
 
 ### Usage
 
