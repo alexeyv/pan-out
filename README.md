@@ -1,14 +1,14 @@
 # Pan Out
 
-You want to make a proper bolognese — the kind that actually tastes like it came from a kitchen that knows what it's doing. You don't want to memorize technique details or wing it from a blog recipe. You want to understand the science, get voice prompts at the stove, swap ingredients for what's actually in your fridge, and learn from each cook.
+You want to make a proper bolognese — the kind that actually tastes like it came from a kitchen that knows what it's doing. You don't want to memorize technique details or wing it from a blog recipe. You want to understand the science, hear what to do next without looking at a screen, swap ingredients for what's actually in your fridge, and learn from each cook.
 
 Pan Out makes that practical. It's a set of AI skills for [Claude Code](https://claude.ai/claude-code) that handle the full cooking pipeline:
 
-1. **Research** -- deep-dive into a dish's science, techniques, and safety, compiled into an executable protocol
-2. **Cook** -- real-time phase-by-phase execution with voice summaries, background timers, sensor polling, and ingredient substitution
-3. **Debrief** -- post-cook review that captures lessons and refines the protocol for next time
+1. **Research** -- deep-dive into a dish's science, techniques, and safety, then build a step-by-step protocol
+2. **Cook** -- talk you through each phase at the stove with timers, temperature checks, and ingredient swaps
+3. **Debrief** -- after you eat, capture what worked and what didn't so next time starts better
 
-The system is built around **protocols** -- YAML "flight plans" that encode everything needed to execute a dish: ingredients, phases, timing, temperatures, sensory cues, and the science behind each step.
+The system is built around **protocols** -- structured recipe files that hold everything needed to cook a dish: ingredients, phases, timing, temperatures, sensory cues, and the science behind each step.
 
 ## Installation
 
@@ -47,8 +47,8 @@ Edit `references/cook-profile.md` with your equipment, preferences, and kitchen 
 
 ### Prerequisites
 
-- [Claude Code](https://claude.ai/claude-code) CLI v1.0.33+
-- macOS (for TTS via `say`) or Linux with `espeak`
+- [Claude Code](https://claude.ai/claude-code) v1.0.33 or later
+- macOS or Linux (so it can talk to you while you cook)
 - An instant-read probe thermometer — for checking liquid temps, meat doneness, and food safety. Practically a must.
 - An infrared (IR) thermometer — point-and-shoot surface temp readings for searing and high-heat work. Really nice to have.
 
@@ -56,60 +56,60 @@ Edit `references/cook-profile.md` with your equipment, preferences, and kitchen 
 
 - Say **"help"** to get oriented
 - Say **"recipe [dish]"** to research a dish and create a protocol
-- Say **"let's cook [dish]"** to execute a protocol with real-time guidance
+- Say **"let's cook [dish]"** to cook a dish step by step
 - Say **"debrief"** after cooking to capture lessons
 
 ## Project Structure
 
 ```
 pan-out/
-├── skills/                 # AI agent skill definitions
+├── skills/                 # The skills that do the work
 │   ├── cook/               #   Real-time guided cooking
 │   ├── recipe/             #   Research and protocol creation
 │   ├── debrief/            #   Post-cook review and learning
 │   └── help/               #   Orientation and skill routing
 ├── protocols/              # YAML cooking protocols
 ├── references/             # Shared knowledge base
-│   ├── protocol-format.md  #   Protocol schema specification
-│   ├── food-safety.md      #   USDA/FDA temperature minimums
+│   ├── protocol-format.md  #   Protocol format specification
+│   ├── food-safety.md      #   Safe cooking temperatures
 │   ├── cook-profile.md     #   Your equipment & preferences (personal, gitignored)
-│   └── calibration.md      #   Your sensor offsets (personal, gitignored)
+│   └── calibration.md      #   Your thermometer offsets (personal, gitignored)
 ├── sessions/               # Cook session state files (gitignored)
 ├── memory/                 # Accumulated lessons and notes (gitignored)
 ├── bin/                    # Utility scripts
-│   └── progress-timer.sh   #   Background timer with TTS announcements
+│   └── progress-timer.sh   #   Background timer with spoken updates
 └── test/                   # Test harnesses
 ```
 
 ## Protocols
 
-Protocols are YAML flight plans for cooking. See [references/protocol-format.md](references/protocol-format.md) for the full specification.
+Protocols are structured recipe files that hold the full plan for cooking a dish. See [references/protocol-format.md](references/protocol-format.md) for the format.
 
 Example protocols included:
-- **beef-stew.yaml** -- collagen braise with Maillard sear (~3h)
-- **bolognese.yaml** -- classic Ragu alla Bolognese, oven-braised (~4.5h)
+- **beef-stew.yaml** -- slow braise with a hard sear up front (~3h)
+- **bolognese.yaml** -- classic ragu, oven-braised (~4.5h)
 
 ## How It Works
 
-### Two Execution Modes
+### Hands-on vs. hands-off
 
-- **Pull mode** (active phases: prep, sear) -- one instruction at a time, waits for your confirmation before proceeding
-- **Push mode** (passive phases: braise, rest) -- timer runs in background, agent pushes periodic updates, you can walk away
+- **When you're at the stove** (prep, searing) -- one instruction at a time, waits for you to say "done" before moving on
+- **When you can walk away** (braising, resting) -- a timer runs in the background and calls you back when something needs attention
 
-### Sensor-Aware
+### Temperature guidance
 
-If you have temperature instruments, the skills read your calibration data and present corrected readings: *"We want 90C actual (about 86-87C on your thermocouple)."*
+If you have thermometers, the system reads your calibration data and tells you exactly what your instrument should show: *"We want 90C — that's about 86-87C on your probe."*
 
-### Living Protocols
+### Recipes that improve
 
-Each cook makes the recipe better. The debrief skill captures timing adjustments, technique discoveries, and seasoning preferences back into the protocol's revision history.
+Each cook makes the protocol better. The debrief captures timing adjustments, technique discoveries, and seasoning preferences so next time starts where this time left off.
 
 ## Philosophy
 
-- **Voice is the headline, screen is the article** -- two-sentence TTS summaries with full detail on screen
+- **Voice is the headline, screen is the article** -- short spoken summaries you can hear over kitchen noise, full detail on screen when you look
 - **Science first** -- understand why, not just how
 - **Sensory cues over clock time** -- "mahogany brown" matters more than "4 minutes"
-- **Forward-only** -- confirmed steps are never repeated
+- **Forward-only** -- once you confirm a step, it's done. No going back.
 
 ## Contributing
 
