@@ -1,14 +1,12 @@
 # Pan Out
 
-AI-powered cooking companion -- research, execute, learn.
+You want to make a proper bolognese — the kind that actually tastes like it came from a kitchen that knows what it's doing. You don't want to memorize technique details or wing it from a blog recipe. You want to understand the science, get voice prompts at the stove, swap ingredients for what's actually in your fridge, and learn from each cook.
 
-## What is this?
+Pan Out makes that practical. It's a set of AI skills for [Claude Code](https://claude.ai/claude-code) that handle the full cooking pipeline:
 
-Pan Out is a collection of AI agent skills that turn [Claude Code](https://claude.ai/claude-code) into a kitchen companion. It handles the full cooking pipeline:
-
-1. **Recipe Research** -- deep web research into a dish's science, techniques, and safety, compiled into an executable YAML protocol
-2. **Guided Cooking** -- real-time phase-by-phase execution with voice summaries, background timers, sensor polling, and error recovery
-3. **Debrief** -- post-cook review that captures lessons and refines protocols for next time
+1. **Research** -- deep-dive into a dish's science, techniques, and safety, compiled into an executable protocol
+2. **Cook** -- real-time phase-by-phase execution with voice summaries, background timers, sensor polling, and ingredient substitution
+3. **Debrief** -- post-cook review that captures lessons and refines the protocol for next time
 
 The system is built around **protocols** -- YAML "flight plans" that encode everything needed to execute a dish: ingredients, phases, timing, temperatures, sensory cues, and the science behind each step.
 
