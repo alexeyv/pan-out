@@ -49,7 +49,8 @@ Edit `references/cook-profile.md` with your equipment, preferences, and kitchen 
 
 - [Claude Code](https://claude.ai/claude-code) CLI v1.0.33+
 - macOS (for TTS via `say`) or Linux with `espeak`
-- Optional: thermocouple and/or IR thermometer
+- An instant-read probe thermometer — for checking liquid temps, meat doneness, and food safety. Practically a must.
+- An infrared (IR) thermometer — point-and-shoot surface temp readings for searing and high-heat work. Really nice to have.
 
 ### Usage
 
