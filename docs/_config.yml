@@ -22,6 +22,9 @@ gh_edit_branch: "master"
 gh_edit_source: docs
 gh_edit_view_mode: "edit"
 
+plugins:
+  - jekyll-sitemap
+
 exclude:
   - README.md
   - CONTRIBUTING.md
