@@ -12,9 +12,15 @@ config/
 plans/
 
 # === Not yet publishable ===
-# TODO: unignore when there are stable, publishable tests and docs
+# TODO: unignore when there are stable, publishable tests
 test/
-docs/
+
+# === Docs build artifacts ===
+docs/_site/
+docs/.jekyll-cache/
+docs/.bundle/
+docs/vendor/
+docs/Gemfile.lock
 
 # === OS ===
 .DS_Store
