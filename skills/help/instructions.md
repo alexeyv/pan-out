@@ -26,9 +26,9 @@ Before routing, check whether `{project-root}/references/cook-profile.md` exists
 
 | Skill | What It Does | Status |
 |-------|-------------|--------|
-| **cook** | Real-time guided cooking execution. Load a protocol, negotiate ingredients, execute phase by phase with timers, voice, and sensor polling. | Ready |
-| **recipe** | Research a dish → deep science dive → compile into an executable protocol file. | Ready |
-| **debrief** | Post-cook review. Capture learnings, deviations, and update persistent memory. | Ready |
+| 🔥 **cook** | Real-time guided cooking execution. Load a protocol, negotiate ingredients, execute phase by phase with timers, voice, and sensor polling. | Ready |
+| 🔬 **recipe** | Research a dish → deep science dive → compile into an executable protocol file. | Ready |
+| 📓 **debrief** | Post-cook review. Capture learnings, deviations, and update persistent memory. | Ready |
 
 ## Quick Start
 

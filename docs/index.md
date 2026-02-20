@@ -6,26 +6,7 @@ nav_order: 1
 
 # Your AI sous-chef, in the terminal.
 
-<div class="terminal">
-  <div class="terminal-header">
-    <span class="terminal-dot red"></span>
-    <span class="terminal-dot yellow"></span>
-    <span class="terminal-dot green"></span>
-    <span class="terminal-title">pan-out — claude code</span>
-  </div>
-  <div class="terminal-body">
-    <span class="user-prompt">You:</span> <span class="response">I want to make beef stew</span><br>
-    <span class="prompt">Pan Out:</span> <span class="response">Let me research that. What equipment do you have?</span><br>
-    <span class="user-prompt">You:</span> <span class="response">Dutch oven, gas stove, instant-read thermometer</span><br>
-    <span class="prompt">Pan Out:</span> <span class="response">Protocol ready — 5 phases, about 3 hours. Say "let's cook" when you're ready.</span><br>
-    <span class="muted">...</span><br>
-    <span class="prompt">Pan Out:</span> <span class="speaker">🔊</span> <span class="response">Sear the first batch — 10 to 12 cubes, 90 seconds per face.</span><br>
-    <span class="user-prompt">You:</span> <span class="response">done</span><br>
-    <span class="prompt">Pan Out:</span> <span class="speaker">🔊</span> <span class="response">Step 3 of 5. Remove the beef, sauté the onions in the fond.</span><br>
-    <span class="muted">...</span><br>
-    <span class="prompt">Pan Out:</span> <span class="speaker">🔊</span> <span class="response">Nice work. That's a wrap. Want to debrief while it's fresh?</span>
-  </div>
-</div>
+<img src="assets/images/hero.jpg" alt="Pan Out terminal showing a generated protocol, with a stir-fry cooking on a gas stove in the background" style="width: 100%; border-radius: 8px; margin-bottom: 1.5rem;">
 
 You want to make a proper bolognese — the kind that actually tastes like it came from a kitchen that knows what it's doing. You know the basics, but you don't want to wing it from a blog recipe and hope for the best. You want to understand *why* the sear matters, be told (in words, not beeps!) when it's time to flip, swap out an ingredient without ruining the dish, and come out the other side knowing more than when you started.
 

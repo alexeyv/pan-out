@@ -9,7 +9,7 @@ nav_order: 2
 
 Pan Out is a collection of four skills that work together. Each handles a different part of the cooking pipeline.
 
-## panout-help
+## 🧭 panout-help
 
 **Orientation and skill routing.**
 
@@ -19,7 +19,7 @@ Slash command: `/panout-help`
 
 ---
 
-## panout-recipe
+## 🔬 panout-recipe
 
 **Research a dish and build a protocol.**
 
@@ -31,7 +31,7 @@ Slash command: `/panout-recipe [dish]`. Also triggered by *"I want to make [dish
 
 ---
 
-## panout-cook
+## 🔥 panout-cook
 
 **Real-time guided cooking.**
 
@@ -43,7 +43,7 @@ Slash command: `/panout-cook [dish]`. Also triggered by *"let's cook"* or *"star
 
 ---
 
-## panout-debrief
+## 📓 panout-debrief
 
 **Post-cook review and learning capture.**
 
