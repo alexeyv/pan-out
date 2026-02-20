@@ -9,7 +9,7 @@
 TOTAL_SECONDS=$1
 LABEL=$2
 LOG_FILE="/tmp/braise_timer.log"
-SOUNDS="/System/Library/Sounds"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Wall-clock anchor — all ticks are relative to this
 START_EPOCH=$(date +%s)
@@ -58,7 +58,7 @@ while [ $NEXT_TICK -lt $TOTAL_SECONDS ]; do
     ELAPSED_MIN=$((NEXT_TICK / 60))
 
     # Soft tick sound
-    afplay "$SOUNDS/Tink.aiff"
+    "$SCRIPT_DIR/chime.sh" tick
 
     # Build message with correct plurals
     if [ $REMAINING_SEC -eq 0 ]; then
@@ -67,7 +67,7 @@ while [ $NEXT_TICK -lt $TOTAL_SECONDS ]; do
         MESSAGE="${LABEL}: $(plural $ELAPSED_MIN minute) elapsed, $(plural $REMAINING_MIN minute) $(plural $REMAINING_SEC second) remaining"
     fi
 
-    say "$MESSAGE"
+    "$SCRIPT_DIR/speak.sh" "$MESSAGE"
 
     echo "$(date '+%H:%M:%S') - $MESSAGE - Elapsed: $NEXT_TICK seconds" >> "$LOG_FILE"
 
@@ -85,19 +85,11 @@ fi
 # Completion: play a loud, distinctive alarm that can't be missed
 COMPLETE_MSG="${LABEL}: Complete!"
 
-# Three rounds of ascending alert sounds — unmistakable vs the soft per-minute Tink
-for i in 1 2 3; do
-    afplay "$SOUNDS/Glass.aiff"
-    sleep 0.3
-    afplay "$SOUNDS/Hero.aiff"
-    sleep 0.3
-    afplay "$SOUNDS/Funk.aiff"
-    sleep 0.5
-done
+"$SCRIPT_DIR/chime.sh" alarm
 
-say "$COMPLETE_MSG"
+"$SCRIPT_DIR/speak.sh" "$COMPLETE_MSG"
 sleep 2
 # Repeat the announcement in case the cook was away
-say "$COMPLETE_MSG"
+"$SCRIPT_DIR/speak.sh" "$COMPLETE_MSG"
 
 echo "$(date '+%H:%M:%S') - $COMPLETE_MSG" >> "$LOG_FILE"

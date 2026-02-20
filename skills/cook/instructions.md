@@ -77,21 +77,21 @@ Before any cooking begins, establish the scale and negotiate reality:
 ### 5. Audio Health Check
 Run at session start. Determines audio mode for the rest of the cook.
 
-1. **Test TTS**: Run `say "Can you hear me?"` and ask cook to confirm
+1. **Test TTS**: Run `bin/speak.sh "Can you hear me?"` and ask cook to confirm
 2. **If cook confirms** → audio mode = `tts`. Proceed normally.
 3. **If TTS errors or cook says no**:
-   - Test alert sound: `afplay /System/Library/Sounds/Glass.aiff`
+   - Test alert sound: `bin/chime.sh alert`
    - If cook hears the chime → audio mode = `chime`. Use chimes for attention, all instructions screen-only.
    - If no sound at all → audio mode = `silent`. Screen-only. Tell the cook: "No audio available. Stay near the screen — I can't call you back from another room."
 4. **Record audio mode** in the state file frontmatter (`audio_mode: tts|chime|silent`)
 
 #### Mid-Cook TTS Failure
-If `say` fails during an active session:
-1. Immediately try chime (`afplay /System/Library/Sounds/Glass.aiff`) as a fallback alert
+If `bin/speak.sh` fails during an active session:
+1. Immediately try chime (`bin/chime.sh alert`) as a fallback alert
 2. Switch audio mode to `chime` in the state file
 3. On screen: "Audio dropped out. Switching to chime alerts. Stay closer to the screen."
 4. For timer completions and phase transitions, play the chime twice (attention-critical moments)
-5. Do NOT keep retrying `say` — it clutters the session. If the cook wants to troubleshoot, they'll ask
+5. Do NOT keep retrying `bin/speak.sh` — it clutters the session. If the cook wants to troubleshoot, they'll ask
 
 ### 6. Create State File
 - Create new state file in `{project-root}/sessions/` with naming: **`cook-{YYYY-MM-DD}-{protocol-name}.md`**
@@ -166,7 +166,7 @@ Every response has two layers:
 ### Voice (TTS) — The Headline
 - Two sentences max, ~15 words each
 - Conversational, audible over kitchen noise
-- Use macOS `say` command
+- Use `bin/speak.sh`
 - No jargon dumps mid-action
 - No timestamps in TTS — timestamps are for screen only, not speech
 - This is how you recall the cook from another room
