@@ -62,7 +62,7 @@ If you want to hack on the skills or run from a local copy:
 | | macOS | Linux | Windows |
 |---|---|---|---|
 | **Core skills** | Yes | Yes | Yes |
-| **Voice output** | Yes | Yes | Screen only |
+| **Voice output** | Yes | Yes | Yes |
 | **Dictation input** | With app | With app | With app |
 
 Voice and dictation are optional, but they make the cooking experience much smoother — especially when your hands are busy. A dictation app like [Wispr Flow](https://wisprflow.com) lets you just say what you need.
