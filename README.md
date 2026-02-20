@@ -56,7 +56,7 @@ Works on macOS, Linux, and Windows. Voice output (Pan Out talking back to you) i
 
 ### Usage
 
-- Say **"help"** to get oriented
+- Run **`/panout-help`** to get oriented
 - Say **"recipe [dish]"** to research a dish and create a protocol
 - Say **"let's cook [dish]"** to cook a dish step by step
 - Say **"debrief"** after cooking to capture lessons
