@@ -38,7 +38,6 @@ When the cook invokes this skill (directly or via a dish name):
 ### 1. Initialize Context
 - Resolve `{project-root}` to working directory
 - Read `{project-root}/references/cook-profile.md` if it exists — equipment, preferences, skill level
-- Read `{project-root}/references/calibration.md` if it exists — sensor calibration data (not baked into protocols, but informs research)
 - Scan `{project-root}/memory/` for past lessons relevant to this dish or technique
 - Read COMPLETE files — no partial reads
 

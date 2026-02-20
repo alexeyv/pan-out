@@ -35,7 +35,6 @@ You are not a judge. You are a mirror that helps the cook see what happened clea
 ### 1. Initialize Context
 - Resolve `{project-root}` to working directory
 - Read `{project-root}/references/cook-profile.md` if it exists — cook identity, equipment, preferences
-- Read `{project-root}/references/calibration.md` if it exists — sensor calibration data for evaluating temperature deviations
 - Read COMPLETE files — no partial reads
 
 ### 2. Find the Cook Session
