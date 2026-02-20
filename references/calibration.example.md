@@ -2,65 +2,46 @@
 
 Load this reference when polling sensors or interpreting temperature readings.
 
-Copy this file to `calibration.md` and fill in your data:
-```
-cp references/calibration.example.md references/calibration.md
-```
+Calibration is optional. The skills work fine without it — they'll just use the temperatures as-is. But if your instruments read high or low, calibration lets the skills correct for that automatically.
 
-## How to Calibrate
+## Your Readings
 
-1. Bring a pot of water to a rolling boil
-2. Note your altitude — boiling point drops ~1C per 300m above sea level
-   - Sea level: 100C
-   - 500m: ~98.5C
-   - 1000m: ~97C
-   - 1500m: ~95C
-3. Measure with each instrument and record the difference
+The help skill can walk you through capturing these. You just read numbers off your thermometers — the skill does the math.
 
-## Your Equipment Calibration
+### Probe Thermometer
 
-### Thermocouple (TC)
-- **Reads**: [high/low/accurate] at cooking temps
-- **Offset**: [e.g., +3.5C above 50C]
-- **Example**: TC displays ___C when actual is ___C
-- **Display target for 90C actual**: show "___C"
+Two-point calibration against ice water and boiling water is a standard method — it gives a reliable linear correction across the cooking range.
 
-### IR Thermometer
-- **Reads**: [high/low/accurate] at cooking temps
-- **Offset**: [e.g., +3C above 50C]
-- **Example**: IR displays ___C when actual is ___C
-- **Display target for 220C actual**: show "___C"
+- **Model**: [your thermometer]
+- **Ice water (0C actual)**: displayed ___C
+- **Boiling water (___C actual for your altitude)**: displayed ___C
 
-### Below 50C
-Note any offset differences at lower temperatures. Many instruments are accurate below 50C.
+### IR Thermometer (sanity check only)
 
-## Important: Nature of Calibration Error
+IR readings depend on the emissivity of the surface, which varies by material, finish, and temperature. You can't meaningfully calibrate an IR gun in a kitchen — but you can sanity-check it. Heat a cast-iron pan, read it with your probe, then with the IR gun. If they're in the same ballpark, you're fine. If the IR gun is way off, you know not to trust it for precision.
 
-Thermometer error is a **linear scale** (slope != 1), not a constant offset. The values above are approximations that work well near the calibration point but diverge further away. They also **drift over time** -- recalibrate periodically.
+- **Model**: [your IR gun]
+- **Sanity check**: probe read ___C, IR read ___C on [surface]
 
-**Protocols always store actual/true temperatures.** The cook skill reads this file at runtime and presents both values: "We want 90C (about 86-87C on your thermocouple)."
+### Altitude
 
-## How to Apply
+If you're at altitude, boiling point is lower — ~1C per 300m:
+- Sea level: 100C
+- 500m: ~98.5C
+- 1000m: ~97C
+- 1500m: ~95C
 
-When presenting sensor targets in conversation:
-1. Read the actual target temperature from the protocol
-2. Apply the approximate offset to estimate the display value
-3. Always present both: "We want XC actual (about YC on your [instrument])"
-4. Never ask the cook to do math
+## How the Skills Use This
 
-## Quick Reference Table
+For the probe, the skills derive a linear correction from the two data points (thermometer error is a scale factor, not a constant offset — that's why two points matter). The IR gun isn't calibrated — it's just sanity-checked. The skills treat IR readings as approximate and won't rely on them for precision. Protocols store actual/true temperatures. At runtime, the cook skill converts to display values so you see: "We want 90C (about 87C on your probe)." The cook never has to do math.
 
-Fill this in after calibration:
+## When to Use Which
 
-| Actual Target | TC Display | IR Display |
-|--------------|------------|------------|
-| 60C          |            |            |
-| 70C          |            |            |
-| 80C          |            |            |
-| 90C          |            |            |
-| 200C         |            |            |
-| 220C         |            |            |
+- **Probe**: liquids, internal meat temps, anything where you need a precise number. The probe is your primary instrument.
+- **IR gun**: quick surface checks — is the pan preheated? Is it heating evenly? Where are the hot spots? The IR gun is fast and spatial, but approximate. Don't use it where precision matters.
+- **Don't IR boiling water** — the turbulent surface (liquid, steam, bubbles) gives readings that swing 5–15C between shots. Use the probe for boiling liquids.
 
 ## Notes
-- Calibration is specific to your equipment. Recalibrate periodically.
+
+- Probe calibration drifts over time. Recalibrate every few months or when readings seem off.
 - At high surface temps (>200C), IR emissivity varies with cookware. Cast iron is reliable; stainless less so.
