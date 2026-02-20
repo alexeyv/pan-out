@@ -20,20 +20,39 @@ You need [Claude Code](https://claude.ai/claude-code) v1.0.33 or later, and abou
 >
 > The first command registers the plugin source. The second installs Pan Out from it.
 
-That's it. Type `/panout-help` and tell it what you want to make — it'll figure out whether you need to research a new protocol or you're ready to cook one you already have.
+That's it. Now create a workspace.
+
+## Create your cooking workspace
+
+Pan Out keeps everything — protocols, session logs, calibration data, cook history — in a single directory on your machine. Create it wherever makes sense for you:
+
+```
+mkdir ~/cooking
+cd ~/cooking
+```
+
+This directory is your **project root**. Always launch Claude Code from here:
+
+```
+claude
+```
+
+Pan Out resolves all its file paths relative to wherever you start Claude Code. Your protocols will live in `protocols/`, your session logs in `sessions/`, and so on. You don't need to create those subdirectories now — the skills create them as needed.
 
 ## From source
 
 If you want to hack on the skills or run from a local copy:
 
-1. Clone the repo:
+1. Clone the repo somewhere (not inside your cooking workspace):
    ```
    git clone https://github.com/alexeyv/pan-out.git
    ```
 
-2. Launch Claude Code with the plugin flag:
+2. Create your cooking workspace and launch Claude Code from it:
    ```
-   claude --plugin-dir ./pan-out
+   mkdir ~/cooking
+   cd ~/cooking
+   claude --plugin-dir /path/to/pan-out
    ```
 
 3. Verify it loaded — type `/panout-help` and you should see the Pan Out skill list.

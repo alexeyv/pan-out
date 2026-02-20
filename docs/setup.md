@@ -10,13 +10,13 @@ The system needs to know what's in your kitchen. Not everything — just enough 
 
 ## Create your cook profile
 
-Copy the example file and fill it in:
+From your cooking workspace, copy the example profile from the Pan Out install location:
 
 ```
-cp references/cook-profile.example.md references/cook-profile.md
+cp /path/to/pan-out/references/cook-profile.example.md cook-profile.md
 ```
 
-Open `references/cook-profile.md` in any editor. Here's what matters and why:
+Open `cook-profile.md` in any editor. Here's what matters and why:
 
 ### Equipment
 
@@ -63,7 +63,7 @@ How do you like to cook?
 
 If you have a probe thermometer and want to know how accurate it is, the system can calibrate it and then tell you what *your* instrument should read for each target: *"We want 90C actual — that's about 86-87C on your probe."*
 
-This is entirely optional. If you trust your thermometer, skip it — the system works fine either way. If you're curious, run `/help` and it'll walk you through it. Takes a few minutes with ice water and boiling water.
+This is entirely optional. If you trust your thermometer, skip it — the system works fine either way. If you're curious, run `/panout-help` and it'll walk you through it. Takes a few minutes with ice water and boiling water.
 
 ## What if I skip this?
 
