@@ -41,7 +41,7 @@ Before each phase starts, the skill runs an aviation-style checklist:
 
 The cook skill has two modes, and it switches between them automatically based on what the protocol says about each phase.
 
-{: .important }
+{: .blue }
 > ### Pull mode — you're at the stove
 >
 > Active phases (prep, sear, saute) run in pull mode. The skill gives you **one instruction at a time** and waits for you to confirm before moving on.
@@ -56,7 +56,7 @@ The cook skill has two modes, and it switches between them automatically based o
 >
 > If you ask a question mid-step — "what's an oblique cut?" — the skill answers immediately, with a full mechanical how-to, then picks up where you left off. Questions always take priority over advancing the protocol.
 
-{: .highlight }
+{: .yellow }
 > ### Push mode — you can walk away
 >
 > Passive phases (braise, rest, marinate) run in push mode. A timer starts in the background, and the skill tells you what to expect:

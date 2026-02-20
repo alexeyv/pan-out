@@ -62,7 +62,7 @@ If you noticed something about the cook skill itself — confusing prompts, miss
 
 The skill shows you every proposed change and asks you to approve, reject, or modify each group. You're the editor; it's the drafter.
 
-{: .note }
+{: .purple }
 > ## The living protocol
 >
 > This is the idea at the heart of Pan Out: **every cook makes the protocol better.**

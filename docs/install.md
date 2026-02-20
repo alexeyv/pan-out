@@ -10,7 +10,7 @@ You need [Claude Code](https://claude.ai/claude-code) v1.0.33 or later, and abou
 
 ## From the plugin marketplace (recommended)
 
-{: .highlight }
+{: .yellow }
 > Open any Claude Code session and run:
 >
 > ```
@@ -50,7 +50,7 @@ Voice and dictation are optional, but they make the cooking experience much smoo
 
 ---
 
-{: .important }
+{: .blue }
 > ## Next step
 >
 > [Set up your kitchen profile →](setup.html)

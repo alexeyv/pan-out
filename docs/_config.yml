@@ -16,15 +16,17 @@ back_to_top: true
 back_to_top_text: "Back to top"
 
 callouts:
-  note:
-    title: Note
+  purple:
+    title: ""
     color: purple
-  highlight:
+  yellow:
+    title: ""
     color: yellow
-  important:
+  blue:
+    title: ""
     color: blue
 
-gh_edit_link: true
+gh_edit_link: false
 gh_edit_link_text: "Edit this page on GitHub"
 gh_edit_repository: "https://github.com/alexeyv/pan-out"
 gh_edit_branch: "master"

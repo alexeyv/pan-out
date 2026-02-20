@@ -89,7 +89,7 @@ Then it hands off:
 
 You don't need to read the YAML — the cook skill handles it. But if you're curious, here's a taste:
 
-{: .highlight }
+{: .yellow }
 > ```yaml
 > phases:
 >   - id: sear
