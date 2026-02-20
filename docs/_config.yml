@@ -1,7 +1,6 @@
 title: "🍳 Pan Out"
 description: AI-powered cooking skills for Claude Code
 remote_theme: just-the-docs/just-the-docs
-theme: just-the-docs
 
 url: https://panout.org
 baseurl: ""

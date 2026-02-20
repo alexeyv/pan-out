@@ -1,15 +1,41 @@
-// Sidebar site title
-.site-title {
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
+// Give the whole page more visual weight
+.main-content {
+  font-weight: 500;
+
+  h1, h2, h3, h4 {
+    font-weight: 700;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  // Bump code block font size
+  code,
+  pre,
+  .highlight code,
+  .highlighter-rouge code {
+    font-size: 0.95rem;
+  }
 }
 
-// Bump code block font size site-wide
-code,
-pre,
-.highlight code,
-.highlighter-rouge code {
-  font-size: 0.95rem !important;
+// Sidebar site title
+.side-bar .site-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+// Links — warm purple to match the page palette
+a {
+  color: $link-color;
+
+  &:hover {
+    color: darken($link-color, 12%);
+  }
 }
 
 .terminal {
@@ -39,7 +65,7 @@ pre,
     }
 
     .terminal-title {
-      color: #a6adc8;
+      color: #b0b6cc;
       font-size: 0.75rem;
       margin-left: 8px;
     }
@@ -68,7 +94,7 @@ pre,
     }
 
     .muted {
-      color: #6c7086;
+      color: #8388a4;
       display: block;
       margin: 0.15rem 0;
     }

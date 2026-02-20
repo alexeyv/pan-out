@@ -1,1 +1,9 @@
-// Empty — required by Just the Docs
+// Override Just the Docs CSS custom properties for warm palette
+// This file loads BEFORE theme styles, so variable overrides propagate everywhere
+
+$body-background-color: #faf9f7;
+$sidebar-color: #f5f3f0;
+$body-text-color: #2d2d2d;
+$body-heading-color: #1a1a1a;
+$link-color: #6b4c9a;
+$nav-child-link-color: #6b4c9a;
