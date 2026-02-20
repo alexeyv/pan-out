@@ -29,6 +29,13 @@
   font-weight: 700;
 }
 
+// Callouts — hide the empty label pseudo-element
+.purple::before,
+.yellow::before,
+.blue::before {
+  display: none;
+}
+
 // Links — warm purple to match the page palette
 a {
   color: $link-color;
