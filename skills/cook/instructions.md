@@ -44,8 +44,8 @@ When the cook invokes this skill:
 
 ### 1. Initialize Context
 - Resolve `{project-root}` to working directory
-- Read `{project-root}/cook-profile.md` if it exists — equipment, preferences, skill level
-- Read `{project-root}/calibration.md` if it exists — sensor offsets for temperature conversion
+- Read `{project-root}/references/cook-profile.md` if it exists — equipment, preferences, skill level
+- Read `{project-root}/references/calibration.md` if it exists — sensor calibration data for temperature conversion
 - Scan `{project-root}/memory/` for past lessons, equipment quirks, calibration notes
 - Read COMPLETE files — no partial reads
 
@@ -136,7 +136,7 @@ When entering a timed hold:
    - Decide: continue hold, adjust, or transition
 
 ### Sensor Polling
-- **Protocols store actual/true temperatures.** At runtime, read [calibration.md]({project-root}/calibration.md) to convert to instrument-specific display values.
+- **Protocols store actual/true temperatures.** At runtime, read [calibration.md]({project-root}/references/calibration.md) to convert to instrument-specific display values.
 - **Always present both values**: "We want 90°C (about 86-87°C on your thermocouple)." The cook sees the true target and what their instrument should read.
 - Calibration data is approximate (linear scale, not constant offset) and drifts over time. Treat it as a helpful guide, not gospel.
 - If no calibration data exists for an instrument, just use the actual target and note that you can't estimate the display reading.

@@ -61,27 +61,9 @@ How do you like to cook?
 
 ## Sensor calibration (optional)
 
-If you have a thermocouple or IR thermometer, calibration makes the system dramatically more useful. Without it, the system gives you true target temperatures. With it, it says: *"We want 90C actual — that's about 86-87C on your thermocouple."*
+If you have a probe thermometer and want to know how accurate it is, the system can calibrate it and then tell you what *your* instrument should read for each target: *"We want 90C actual — that's about 86-87C on your probe."*
 
-Copy the calibration template:
-
-```
-cp references/calibration.example.md references/calibration.md
-```
-
-### The boiling water test
-
-1. Bring a pot of water to a rolling boil
-2. Look up your altitude — boiling point drops about 1C per 300m above sea level
-3. Measure the boiling water with each instrument
-4. Record the difference between what the instrument shows and what the actual temperature should be
-
-That's your offset. Fill it into `references/calibration.md`. The system applies it automatically during cooks.
-
-A few things to know about calibration:
-- Thermometer error is a **slope**, not a constant offset — it's most accurate near where you calibrated and drifts as you move away
-- Offsets **change over time** — recalibrate every few months
-- At high surface temps (above 200C), IR readings vary with the cookware material — cast iron is reliable, stainless less so
+This is entirely optional. If you trust your thermometer, skip it — the system works fine either way. If you're curious, run `/help` and it'll walk you through it. Takes a few minutes with ice water and boiling water.
 
 ## What if I skip this?
 

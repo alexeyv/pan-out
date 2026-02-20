@@ -29,7 +29,7 @@ cp references/cook-profile.example.md references/cook-profile.md
 ### Temperature Instruments
 - Thermocouple / probe thermometer — model, response time, calibration status
 - IR thermometer — calibration status
-- See `calibration.md` for offset data
+- See `calibration.md` for calibration data
 
 ### Prep & Processing
 - Stand mixer, food processor, blender, etc.

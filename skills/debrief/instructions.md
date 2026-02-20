@@ -34,8 +34,8 @@ You are not a judge. You are a mirror that helps the cook see what happened clea
 
 ### 1. Initialize Context
 - Resolve `{project-root}` to working directory
-- Read `{project-root}/cook-profile.md` if it exists — cook identity, equipment, preferences
-- Read `{project-root}/calibration.md` if it exists — sensor offsets for evaluating temperature deviations
+- Read `{project-root}/references/cook-profile.md` if it exists — cook identity, equipment, preferences
+- Read `{project-root}/references/calibration.md` if it exists — sensor calibration data for evaluating temperature deviations
 - Read COMPLETE files — no partial reads
 
 ### 2. Find the Cook Session
@@ -156,7 +156,7 @@ Lessons and observations that apply to future cooks:
 - Technique learnings (e.g., "Searing in 3 batches instead of 2 gave better crust")
 - Timing discoveries (e.g., "Chuck at 900g needs 100min braise, not 90")
 - Flavor notes (e.g., "2 tbsp soy sauce was right for 900g protein")
-- Calibration discoveries (sensor offsets that need updating in `{project-root}/calibration.md`)
+- Calibration discoveries (readings that suggest `{project-root}/references/calibration.md` needs recalibrating)
 - Equipment behavior (e.g., "Dutch oven on burner 3 runs ~5C hotter than burner 1")
 - Standing preferences (e.g., "Prefers less salt", "Likes more garlic")
 
