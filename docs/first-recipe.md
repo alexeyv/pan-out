@@ -89,21 +89,22 @@ Then it hands off:
 
 You don't need to read the YAML — the cook skill handles it. But if you're curious, here's a taste:
 
-```yaml
-phases:
-  - id: sear
-    name: "Maillard Phase"
-    type: active
-    duration: "15-20m"
-    briefing: |
-      High heat, small batches, don't crowd the pan.
-      We want mahogany browning on at least two faces per cube.
-    steps:
-      - instruction: "Sear beef in 2-3 batches, 90-120s per face"
-        batch_size: "10-12 cubes max"
-        sensory_cue: "Mahogany brown crust, releases from pan without sticking"
-        science: "Maillard reaction requires >140C and dry surface."
-```
+{: .highlight }
+> ```yaml
+> phases:
+>   - id: sear
+>     name: "Maillard Phase"
+>     type: active
+>     duration: "15-20m"
+>     briefing: |
+>       High heat, small batches, don't crowd the pan.
+>       We want mahogany browning on at least two faces per cube.
+>     steps:
+>       - instruction: "Sear beef in 2-3 batches, 90-120s per face"
+>         batch_size: "10-12 cubes max"
+>         sensory_cue: "Mahogany brown crust, releases from pan without sticking"
+>         science: "Maillard reaction requires >140C and dry surface."
+> ```
 
 For the full format specification, see [Protocol Reference](reference/protocols.html).
 

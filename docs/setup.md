@@ -28,8 +28,17 @@ List your cookware, heat sources, and prep tools. The system uses this to:
 You don't need to catalog every spatula. Focus on:
 - Oven and stovetop type (gas, electric, induction)
 - Dutch ovens and large pots — size and material
-- Temperature instruments (thermocouple, IR gun, probe thermometer)
+- Temperature instruments (see below)
 - Anything you *don't* have that recipes commonly assume (e.g., no stand mixer, no kitchen scale)
+
+### Temperature instruments
+
+Good temperature data makes the biggest difference in cooking outcomes. Two instruments cover almost everything:
+
+- **An instant-read probe thermometer** — the kind with a metal spike you stick into food or dip into liquid. Tells you if your braise is holding at the right temperature, or if that chicken is done in the center. This is practically a must. Without one, you're guessing on doneness and food safety.
+- **An infrared (IR) thermometer** — a point-and-shoot gun that reads surface temperature without touching anything. You aim it at your pan to know when it's hot enough to sear. Really nice to have for any high-heat work, but you can get by without one.
+
+If you set up [calibration](#sensor-calibration-optional) below, the system tells you what your specific instrument should read for each target temperature.
 
 ### Preferences
 

@@ -1,6 +1,7 @@
-title: Pan Out
+title: "🍳 Pan Out"
 description: AI-powered cooking skills for Claude Code
 remote_theme: just-the-docs/just-the-docs
+theme: just-the-docs
 
 url: https://panout.org
 baseurl: ""
@@ -14,6 +15,15 @@ nav_external_links: []
 
 back_to_top: true
 back_to_top_text: "Back to top"
+
+callouts:
+  note:
+    title: Note
+    color: purple
+  highlight:
+    color: yellow
+  important:
+    color: blue
 
 gh_edit_link: true
 gh_edit_link_text: "Edit this page on GitHub"

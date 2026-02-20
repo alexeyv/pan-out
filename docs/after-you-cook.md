@@ -62,13 +62,14 @@ If you noticed something about the cook skill itself — confusing prompts, miss
 
 The skill shows you every proposed change and asks you to approve, reject, or modify each group. You're the editor; it's the drafter.
 
-## The living protocol
-
-This is the idea at the heart of Pan Out: **every cook makes the protocol better.**
-
-The recipe skill creates the first version from research. The cook skill executes it and captures what actually happened. The debrief skill writes the lessons back. Next time you cook the same dish, the protocol already knows that your chuck needs 100 minutes, that your dutch oven overshoots on burner 3, and that you prefer less salt.
-
-Over multiple cooks, a protocol goes from "researched best practices" to "tuned to this kitchen and this cook." That's not something a blog recipe can do.
+{: .note }
+> ## The living protocol
+>
+> This is the idea at the heart of Pan Out: **every cook makes the protocol better.**
+>
+> The recipe skill creates the first version from research. The cook skill executes it and captures what actually happened. The debrief skill writes the lessons back. Next time you cook the same dish, the protocol already knows that your chuck needs 100 minutes, that your dutch oven overshoots on burner 3, and that you prefer less salt.
+>
+> Over multiple cooks, a protocol goes from "researched best practices" to "tuned to this kitchen and this cook." That's not something a blog recipe can do.
 
 ---
 

@@ -41,36 +41,38 @@ Before each phase starts, the skill runs an aviation-style checklist:
 
 The cook skill has two modes, and it switches between them automatically based on what the protocol says about each phase.
 
-### Pull mode — you're at the stove
-
-Active phases (prep, sear, saute) run in pull mode. The skill gives you **one instruction at a time** and waits for you to confirm before moving on.
-
-> *Voice: "Sear the first batch — 10 to 12 cubes, 90 seconds per face."*
+{: .important }
+> ### Pull mode — you're at the stove
 >
-> Screen shows the full detail: batch size, sensory cue ("mahogany brown crust, releases from pan without sticking"), the science behind why crowding kills the sear.
+> Active phases (prep, sear, saute) run in pull mode. The skill gives you **one instruction at a time** and waits for you to confirm before moving on.
 >
-> You do the step, say "done" or "next."
+> > *Voice: "Sear the first batch — 10 to 12 cubes, 90 seconds per face."*
+> >
+> > Screen shows the full detail: batch size, sensory cue ("mahogany brown crust, releases from pan without sticking"), the science behind why crowding kills the sear.
+> >
+> > You do the step, say "done" or "next."
+> >
+> > The skill advances. *"Step 3 of 5. Remove the beef, saute the onions in the fond."*
 >
-> The skill advances. *"Step 3 of 5. Remove the beef, saute the onions in the fond."*
+> If you ask a question mid-step — "what's an oblique cut?" — the skill answers immediately, with a full mechanical how-to, then picks up where you left off. Questions always take priority over advancing the protocol.
 
-If you ask a question mid-step — "what's an oblique cut?" — the skill answers immediately, with a full mechanical how-to, then picks up where you left off. Questions always take priority over advancing the protocol.
-
-### Push mode — you can walk away
-
-Passive phases (braise, rest, marinate) run in push mode. A timer starts in the background, and the skill tells you what to expect:
-
-> *Voice: "Braise is on. Timer set for 90 minutes. You can walk away — I'll call you back for a lid-lift check."*
-
-During the hold, the skill does useful things with the dead time:
-- **Pre-flight briefing** for the next phase — what to prepare, what to have ready
-- **Science context** — why collagen converts at 80-90C, why a lazy simmer beats a rolling boil
-- **Sensor polls** at regular intervals — *"What's the thermocouple reading?"*
-
-When the timer fires, it calls you back:
-
-> *Voice: "Timer's up. Lid-lift check — grab your thermometer."*
-
-It asks for a sensor reading, evaluates whether to continue the hold or transition, and moves on when the food is ready — guided by sensory cues, not just the clock.
+{: .highlight }
+> ### Push mode — you can walk away
+>
+> Passive phases (braise, rest, marinate) run in push mode. A timer starts in the background, and the skill tells you what to expect:
+>
+> > *Voice: "Braise is on. Timer set for 90 minutes. You can walk away — I'll call you back for a lid-lift check."*
+>
+> During the hold, the skill does useful things with the dead time:
+> - **Pre-flight briefing** for the next phase — what to prepare, what to have ready
+> - **Science context** — why collagen converts at 80-90C, why a lazy simmer beats a rolling boil
+> - **Sensor polls** at regular intervals — *"What's the thermocouple reading?"*
+>
+> When the timer fires, it calls you back:
+>
+> > *Voice: "Timer's up. Lid-lift check — grab your thermometer."*
+>
+> It asks for a sensor reading, evaluates whether to continue the hold or transition, and moves on when the food is ready — guided by sensory cues, not just the clock.
 
 ## Talking to it
 
