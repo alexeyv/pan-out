@@ -123,7 +123,7 @@ At every phase transition:
 
 ### Passive Phase Execution (Timer-Driven)
 When entering a timed hold:
-1. Start timer immediately — use `bin/progress-timer.sh <seconds> "<label>"` run in background
+1. Start timer — see **Timer Integration** below for mode selection (kicker > progress-timer > manual)
 2. Tell the cook: "You can walk away. I'll call you back at minute N."
 3. Brief what happens next: "When the timer fires, we'll do a lid-lift check. Have your thermometer ready."
 4. During the hold:
@@ -215,6 +215,7 @@ phase_index: 2
 elapsed_minutes: 67
 scaled_to: "900g beef"
 deviations: 1
+timer_mode: progress-timer
 last_sensor:
   tc_display: "89"
   ir_display: null
@@ -227,23 +228,112 @@ Body contains per-phase narrative logs with timestamps and deviations.
 
 ## Timer Integration
 
-Use the existing timer script:
+Three timer modes, in order of preference:
+
+### Mode 1: Kicker Agent (preferred)
+
+Use when running in a Claude Code team context. The kicker is a haiku-model agent that runs a bash heartbeat and messages you on schedule.
+
+**At passive phase entry, do the following in order:**
+
+#### Step 1: Compute the schedule
+
+Calculate absolute epoch timestamps for each event. Use `date +%s` to get the current epoch, then add offsets.
+
+For holds > 30 minutes:
+- Progress pings every 10 minutes starting at minute 10
+- Pre-flight briefing for the next phase at T-15 minutes
+- Ready check at T-5 minutes
+- Timer complete at T+0
+
+For holds ≤ 30 minutes:
+- Progress pings every 5 minutes
+- Ready check at T-5 minutes
+- Timer complete at T+0
+
+#### Step 2: Create tasks for each event
+
+Use TaskCreate for each scheduled event. The task description must contain FULL context — what to check, what to say, sensory cues, next-step prep. This is the anti-lost-in-the-middle pattern: when the kicker fires the event minutes or hours later, the lead reads the task description fresh and has everything needed regardless of what got compressed out of conversation history.
+
+Task naming convention:
+- `KICKER: Progress ping — {N} min elapsed`
+- `KICKER: Pre-flight briefing for {next_phase}`
+- `KICKER: Ready check — cook staged for {next_phase}?`
+- `KICKER: Timer complete — begin {next_phase}`
+
+#### Step 3: Write the schedule file
+
+Write a TSV file to `/tmp/kicker-schedule-{session-name}.tsv` with one line per event:
+
+```
+{epoch_timestamp}\t{task_id}\t{short_message}
+```
+
+Lines must be sorted by timestamp (earliest first).
+
+#### Step 4: Spawn the kicker agent
+
+Read `kicker-prompt.md` from this skill's directory. Substitute the placeholders:
+- `{{heartbeat_script_path}}` → absolute path to `bin/kicker-heartbeat.sh` in this skill's install location
+- `{{schedule_file_path}}` → the TSV path from step 3
+- `{{lead_name}}` → your agent name on this team (usually "team-lead")
+
+Spawn using the Task tool:
+- `subagent_type`: `general-purpose`
+- `model`: `haiku`
+- `team_name`: the current team name
+- `name`: `kicker`
+- `prompt`: the interpolated kicker prompt
+
+Record `timer_mode: kicker` in the state file.
+
+**Do NOT run `progress-timer.sh` when the kicker is active.**
+
+#### Handling kicker messages
+
+When you receive a message from the kicker:
+- Parse the task_id from the message
+- Read the full task via TaskGet
+- Act on the event type:
+
+| Event | Action |
+|-------|--------|
+| Progress ping | Deliver status banner. Optionally poll sensors or offer a science tip. |
+| Pre-flight briefing | Deliver the FULL pre-flight briefing for the next phase — equipment, ingredients, sequence, sensory cues. This is mandatory, not optional. |
+| Ready check | Ask the cook: "Are you staged and ready for [next phase]?" Wait for confirmation. |
+| Timer complete | Play `bin/chime.sh alarm` + `bin/speak.sh "Timer complete"`. Advance to next phase. |
+
+#### Kicker teardown
+
+- **Happy path:** The kicker fires its last event, the schedule empties, it sends a "shutting down" message and stops. No action needed.
+- **Abort:** If the cook wants to end the phase early, send a `shutdown_request` to the kicker via SendMessage. The kicker will approve immediately and exit.
+- Record kicker exit in the state file narrative log.
+
+### Mode 2: Progress Timer (fallback)
+
+Use when NOT in a team context but `bin/progress-timer.sh` is available.
+
 ```bash
 bin/progress-timer.sh <total_seconds> "<label>"
 ```
 
-- Run in background so conversation continues
-- Timer logs to `/tmp/braise_timer.log`
-- Check `tail -1 /tmp/braise_timer.log` to report elapsed time
-- Timer speaks updates every minute via TTS and plays completion alarm
+Run in background. Timer logs to `/tmp/braise_timer.log`. Check `tail -1 /tmp/braise_timer.log` to report elapsed time. Timer speaks TTS updates every minute and plays completion alarm.
 
-For the kicker pattern (Claude Code teams): a haiku-model kicker agent can run the timer and message you on each tick. If no kicker is available, the cook relays timer events ("timer went off").
+**Limitation:** Cook must stay near the screen. You cannot proactively message them or deliver pre-flight briefings during the hold.
 
-### Timer Unavailable
-If `bin/progress-timer.sh` fails or doesn't exist, the cook is the timer. Tell them:
-- "Timer script isn't working. Set a timer on your phone for [N minutes]. Come back and tell me when it goes off."
-- Record the expected end time in the state file so you can cross-check when the cook returns
-- Continue the session normally — the cook relays "timer went off" and you pick up from there
+### Mode 3: Manual Timer (last resort)
+
+If neither kicker nor progress-timer is available:
+- Tell the cook: "Set a timer on your phone for [N minutes]. Come back and tell me when it goes off."
+- Record expected end time in the state file
+- When the cook returns and says "timer went off", continue from where you left off
+
+### State file tracking
+
+Record the active timer mode in the state file frontmatter:
+```yaml
+timer_mode: kicker    # kicker | progress-timer | manual
+```
 
 ## Timestamps
 
