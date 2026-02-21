@@ -19,6 +19,8 @@ description: "One-line description"
 serves: 4
 total_time: "3h 15m"
 source: "Origin of this protocol (research session, adapted from, etc.)"
+research:                              # optional — companion science deep-dives
+  - "dish-name-research.md"
 
 # Revision history — appended by debrief skill after each cook
 revision_history: []
@@ -205,6 +207,9 @@ Every phase has a `briefing` field — delivered at phase entry and during prece
 
 ### Duration vs Duration Range
 `duration` is the expected time. `duration_range` is the acceptable window. The agent uses sensory cues and sensor data to decide when to actually transition, not just the clock.
+
+### Research File
+The optional `research` field lists companion Markdown files (in the same `protocols/` directory) containing curated science that informed the protocol — protein chemistry, critical control points, failure modes, technique rationale, food safety references. Can be a single string or a list. The recipe skill creates these alongside the protocol YAML. Any skill answering "why" questions about a protocol should load these files first (see CLAUDE.md).
 
 ### Revision History
 The `revision_history` field tracks protocol evolution across cooks. Each entry records what changed, why, and which cook session motivated it.
