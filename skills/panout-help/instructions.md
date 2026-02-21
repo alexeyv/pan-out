@@ -24,22 +24,22 @@ Before routing, check whether `{project-root}/references/cook-profile.md` exists
 
 ## Available Skills
 
-| Skill | What It Does | Status |
-|-------|-------------|--------|
-| 🔥 **cook** | Real-time guided cooking execution. Load a protocol, negotiate ingredients, execute phase by phase with timers, voice, and sensor polling. | Ready |
-| 🔬 **recipe** | Research a dish → deep science dive → compile into an executable protocol file. | Ready |
-| 📓 **debrief** | Post-cook review. Capture learnings, deviations, and update persistent memory. | Ready |
+| Skill | Command | What It Does | Status |
+|-------|---------|-------------|--------|
+| 🔥 **cook** | `/panout-cook` | Real-time guided cooking execution. Load a protocol, negotiate ingredients, execute phase by phase with timers, voice, and sensor polling. | Ready |
+| 🔬 **recipe** | `/panout-recipe` | Research a dish → deep science dive → compile into an executable protocol file. | Ready |
+| 📓 **debrief** | `/panout-debrief` | Post-cook review. Capture learnings, deviations, and update persistent memory. | Ready |
 
 ## Quick Start
 
 ### "I have a protocol and want to cook"
-→ Use the **cook** skill. Load your protocol from `{project-root}/protocols/` and start cooking.
+→ Say `/panout-cook [dish]` to load your protocol and start cooking.
 
 ### "I want to learn about a dish and create a protocol"
-→ Use the **recipe** skill (when available). Or ask the agent to help you create a protocol interactively.
+→ Say `/panout-recipe [dish]` to research the dish and build a protocol.
 
 ### "I just finished cooking and want to capture what I learned"
-→ Use the **debrief** skill (when available).
+→ Say `/panout-debrief` after your cook session to capture learnings.
 
 ## What's a Protocol?
 

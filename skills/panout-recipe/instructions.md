@@ -250,7 +250,7 @@ source: "Research compiled in {project-root}/protocols/{dish-slug}-research.md"
 After saving:
 - Confirm both files were written successfully
 - Display a final summary: phases, total time, equipment, serves
-- Offer the handoff: "Protocol ready. Say `/cook {dish}` when you're ready to start."
+- Offer the handoff: "Protocol ready. Say `/panout-cook {dish}` when you're ready to start."
 
 ---
 
