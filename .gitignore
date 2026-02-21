@@ -11,10 +11,6 @@ memory/
 config/
 plans/
 
-# === Not yet publishable ===
-# TODO: unignore when there are stable, publishable tests
-test/
-
 # === Docs build artifacts ===
 docs/_site/
 docs/.jekyll-cache/
