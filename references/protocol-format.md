@@ -1,6 +1,13 @@
 # Protocol Format Reference
 
-Protocols are YAML files stored in `protocols/`. They are the contract between the `recipe` skill (which creates them) and the `cook` skill (which executes them).
+Protocols are stored as Markdown files with YAML front matter in `protocols/`. Every dish has two files:
+
+1. **`{dish}.md`** — the executable protocol (front matter + Markdown body)
+2. **`{dish}-science.md`** — the science deep-dive (physics, chemistry, failure modes, food safety)
+
+The science file is the **arbiter**: if there is any conflict between the protocol body and the science file on temperatures, safety, or chemistry, the science file wins. Update both when changing parameters.
+
+---
 
 ## Design Principles
 
@@ -11,16 +18,20 @@ Protocols are YAML files stored in `protocols/`. They are the contract between t
 - **Carries its own scaling logic**: Quantities + principles, not just numbers
 - **Phase-based**: Every cook is a sequence of phases, each with distinct character
 
-## Format
+---
+
+## File 1: `{dish}.md` — Protocol
+
+### Front Matter (YAML)
 
 ```yaml
+---
 name: "Dish Name"
 description: "One-line description"
 serves: 4
 total_time: "3h 15m"
 source: "Origin of this protocol (research session, adapted from, etc.)"
-research:                              # optional — companion science deep-dives
-  - "dish-name-research.md"
+science: "dish-name-science.md"   # companion science file in same directory
 
 # Revision history — appended by debrief skill after each cook
 revision_history: []
@@ -39,150 +50,170 @@ equipment:
   - ir-thermometer
   - cutting-board
 
-# Ingredients with functional roles for intelligent substitution
-ingredients:
-  - item: chuck beef
-    quantity: "900g"
-    role: primary-protein
-    scaling_principle: "Main mass. Everything else scales relative to this."
-    notes: "Cut against grain for serving"
-
-  - item: yellow onion
-    quantity: "2 medium (~300g)"
-    role: aromatic-base
-    scaling_principle: "Aromatics at ~10% of total volume"
-    substitutes: ["shallots (sweeter)", "leeks (milder)"]
-
-  - item: beef stock
-    quantity: "750ml"
-    role: braising-liquid
-    scaling_principle: "Liquid covers meat by 2cm"
-    notes: "Low-sodium preferred — season at end"
-
-  - item: salt
-    quantity: "to taste"
-    role: seasoning
-    scaling_principle: "1.5% of protein weight as starting point"
-    notes: "Add AFTER rest phase. Soy sauce first for umami+salt combo"
-
-# Phases — the execution backbone
+# Phases flat list — used by cook skill for structure (body has full detail)
 phases:
   - id: prep
     name: "Mise en Place"
     type: active          # active = pull mode, passive = push mode
     duration: "15-20m"
-    briefing: |
-      We're cutting and organizing everything before heat touches anything.
-      Bone-dry surfaces on the beef are critical for Maillard.
-    steps:
-      - instruction: "Cube the beef into 3cm pieces"
-        quantity: "900g → ~30 cubes"
-        technique: "Cut against visible grain lines"
-        sensory_cue: "Each cube roughly the size of your thumb's first knuckle to first joint"
-      - instruction: "Pat beef completely dry with paper towels"
-        science: "Surface moisture → steam → no Maillard. Dry surface → browning starts at 140°C"
-        sensory_cue: "Paper towel comes away without wet spots"
-      - instruction: "Dice onions, 1cm pieces"
-        technique: "See technique explainer if needed"
-      - instruction: "Quarter mushrooms"
-        technique: "Stem-down, cut through crown"
-
   - id: sear
     name: "Maillard Phase"
     type: active
     duration: "15-20m"
-    briefing: |
-      High heat, small batches, don't crowd the pan. We want mahogany
-      browning on at least two faces per cube. This is where flavor is built.
-    temp_target:
-      surface: "210-230°C"
-      sensor: ir
-    steps:
-      - instruction: "Heat dutch oven to 220°C surface temperature"
-        sensor_check:
-          type: ir
-          target: "220°C"
-      - instruction: "Sear beef in 2-3 batches, 90-120 seconds per face"
-        batch_size: "10-12 cubes max"
-        sensory_cue: "Mahogany brown crust, releases from pan without sticking"
-        science: "Maillard reaction requires >140°C and dry surface. Crowding drops temp below threshold."
-      - instruction: "Remove beef, sauté onions in fond"
-        duration: "3-4 minutes"
-        sensory_cue: "Translucent edges, fond dissolving into onion moisture"
-
   - id: braise
     name: "Collagen Conversion"
-    type: passive           # push mode — timer driven
+    type: passive
     duration: "90m"
     duration_range: "75-120m"
-    briefing: |
-      Low and slow. Collagen converts to gelatin at 80-90°C over time.
-      The liquid should barely simmer — lazy bubbles, not a rolling boil.
-      You can walk away. I'll check in every 15 minutes.
-    temp_target:
-      liquid: "88-92°C"
-      sensor: tc
-    sensor_schedule:
-      interval: "15m"
-      type: tc
-      action: "Lid-lift check. What's the TC reading?"
-    timer:
-      duration_seconds: 5400   # 90 minutes
-      label: "Braise"
-    steps:
-      - instruction: "Return beef to pot, add stock and mushrooms"
-        scaling_note: "Liquid should cover meat by ~2cm"
-      - instruction: "Bring to gentle simmer, then reduce heat"
-        sensory_cue: "Lazy bubbles breaking surface every 2-3 seconds"
-        science: "Target 88-92°C in liquid. Above 95°C = muscle fibers seize and toughen despite collagen converting."
-        equipment_note: "Cast iron overshoots — reduce burner BEFORE reaching 90°C. Residual heat carries it up."
-      - instruction: "Lid on, slight crack for steam release"
-
-  - id: integrate-veg
-    name: "Vegetable Integration"
-    type: active
-    duration: "25-30m"
-    briefing: |
-      Beef should be fork-tender. Now we add potatoes and carrots.
-      They cook faster than the beef did, so timing is tighter.
-    steps:
-      - instruction: "Test beef tenderness"
-        sensory_cue: "Fork slides in and out with zero resistance. Like warm butter."
-        sensor_check:
-          type: tc
-          target: "90°C"
-      - instruction: "Add cubed potatoes (2.5cm) and carrots (oblique cut)"
-        scaling_note: "700-900g potatoes, 300g carrots"
-        equipment_note: "Adding cold veg drops temp. Bump heat briefly, then reduce before it overshoots."
-      - instruction: "Simmer until potatoes are tender"
-        duration: "25-30 minutes"
-        sensor_check:
-          type: tc
-          target: "90-95°C"
-        sensory_cue: "Knife slides through potato center with no resistance"
-    timer:
-      duration_seconds: 1500   # 25 minutes
-      label: "Veg Integration"
-
+    timer_seconds: 5400   # 90 minutes
   - id: rest-season
     name: "Rest & Season"
     type: passive
     duration: "15m"
-    briefing: |
-      Off heat. Pressure equalizes in the meat fibers as it cools slightly.
-      This is when we season — salt last, soy sauce first for umami.
-    timer:
-      duration_seconds: 900   # 15 minutes
-      label: "Rest"
-    steps:
-      - instruction: "Remove from heat, lid on"
-        science: "Resting lets moisture redistribute. Cutting immediately = moisture loss."
-      - instruction: "After 10 minutes rest: season with soy sauce, then salt to taste"
-        technique: "Soy sauce first (umami + salt), then adjust with plain salt"
-        notes: "Calgary hard water — start conservative on salt"
-      - instruction: "Taste and adjust"
-        sensory_cue: "Should taste rich, savory, with clean salt finish"
+    timer_seconds: 900
+  - id: optional-phase-example
+    name: "Optional Phase Example"
+    type: active
+    duration: "10m"
+    optional: true   # When true, cook skill presents this phase as skippable and asks the cook whether to include it before starting
+
+# Scaling block
+scaling:
+  base_serves: 4
+  base_protein_g: 900
+  principle: "Scale everything to protein weight. Liquid covers meat by 2cm regardless of quantity."
+
+---
 ```
+
+### Body (Markdown)
+
+The body is structured as `## Phase: [Name]` sections, with the full narrative, steps, and sensory cues. The cook skill parses these sections by name, matched to the front matter `phases` list.
+
+#### Sensor targets in the body
+
+Bold sensor targets use the pattern `**Target: 90°C (TC)**` where:
+- The temperature is the **actual/true temperature** (not instrument-adjusted)
+- The parenthetical is the sensor type: `TC` (thermocouple), `IR` (infrared)
+- Calibration is applied at runtime by the cook skill — never bake offsets into the protocol
+
+Example body structure:
+
+```markdown
+## Overview
+
+Brief dish narrative. What makes this dish work. What the cook needs to understand before starting.
+
+## Ingredients
+
+| Item | Quantity | Role | Notes |
+|------|----------|------|-------|
+| Chuck beef | 900g | primary-protein | Cut against grain. Connective tissue = flavor after braising. |
+| Yellow onion | 2 medium (~300g) | aromatic-base | Substitutes: shallots (sweeter), leeks (milder) |
+| Beef stock | 750ml | braising-liquid | Low-sodium preferred — season at end |
+
+**Scaling principles:** [prose describing scaling logic]
+
+## Phase: Mise en Place
+
+**Type:** active | **Duration:** 15-20 min
+
+Briefing: We're cutting and organizing before any heat. Once the sear starts, it's continuous. Bone-dry beef surfaces are the single most important prep step for browning.
+
+1. **Cube the beef into 3cm pieces** (900g → ~30 cubes)
+   - Technique: Cut against visible grain lines
+   - *Sensory: Each cube roughly thumb-knuckle sized*
+
+2. **Pat beef completely dry with paper towels**
+   - Science: Surface moisture creates steam which prevents Maillard browning. Need >140°C at surface, impossible through a water layer.
+   - *Sensory: Paper towel comes away without wet spots. Surface feels tacky, not slick.*
+
+## Phase: Collagen Conversion
+
+**Type:** passive | **Duration:** 90 min (range: 75–120 min) | **Timer:** 90:00
+
+**Target: 88–92°C (TC)**
+
+Briefing: Low and slow. Collagen converts to gelatin at 80-90°C over time. The liquid should barely simmer — lazy bubbles, not a rolling boil. You can walk away. I'll check in every 15 minutes.
+
+1. **Return beef to pot, add stock** — liquid should cover meat by ~2cm
+2. **Bring to gentle simmer on MEDIUM, reduce to LOW before hitting 90°C**
+   - *Sensory: Lazy bubbles every 2-3 seconds. Steam wisps, not clouds.*
+   - Equipment note: Cast iron dutch oven has massive thermal inertia. Reduce burner BEFORE hitting 90°C — residual heat carries it up 3-5°C.
+3. **Lid on, slight crack for steam release**
+
+## Equipment Notes
+
+[Specific equipment behavior notes for this dish — cast iron quirks, sensor placement, etc.]
+
+## Storage & Reheating
+
+[How to store leftovers, how long they keep, how to reheat without ruining texture.]
+
+## Debrief Notes
+
+*Skills append here after cooks. Do not edit manually.*
+
+## Substitutions
+
+*Skills append confirmed substitution outcomes here.*
+
+## Scaling Notes
+
+*Skills append confirmed scaling experiences here.*
+```
+
+---
+
+## File 2: `{dish}-science.md` — Science Deep-Dive
+
+The science file is the **arbiter** for all scientific claims in the protocol. When the cook asks "why" questions, when the debrief skill considers protocol changes, and when the recipe skill creates or revises protocols — the science file is consulted first.
+
+```markdown
+# {Dish Name} — Science & Principles
+
+Source: Compiled from web research by recipe skill
+Date: {date}
+Protocol: protocols/{dish}.md
+
+## Physics & Chemistry
+
+What transformations happen and why. Heat transfer mechanisms,
+protein behavior, chemical reactions. Quantitative where possible.
+
+## Critical Control Points
+
+3-5 key variables that determine success or failure.
+Each with: target, tolerance, what happens outside tolerance.
+
+## Failure Modes
+
+| Problem | Cause | Diagnostic Cue | Prevention/Recovery |
+|---------|-------|----------------|---------------------|
+| ... | ... | ... | ... |
+
+## Food Safety
+
+Relevant USDA/FDA temps. Time-temperature equivalents if applicable.
+When to be vigilant vs. when physics has you covered.
+
+## Ingredient Notes
+
+Functional roles of key ingredients. Substitution logic.
+Scaling principles. What's load-bearing vs. adjustable.
+
+## Sources
+
+Numbered list with URLs.
+```
+
+---
+
+## Canonical Example
+
+`protocols/beef-stew.md` + `protocols/beef-stew-science.md` are the structural gold standard. When in doubt, look at how they're organized.
+
+---
 
 ## Key Conventions
 
@@ -190,29 +221,45 @@ phases:
 - `active` → Pull mode. Cook is hands-on. One instruction at a time.
 - `passive` → Push mode. Timer-driven. Pre-flight briefings. Cook can leave.
 
-### Burner Settings
-Include explicit `burner` field on steps that involve heat changes. Use plain language: `"high"`, `"medium"`, `"low"`, `"medium → low"`, `"off"`. Never assume the cook knows what burner setting produces a target temperature — tell them directly.
+### Optional Phases
+A phase may carry `optional: true` in the front matter phases list. When the cook skill encounters an optional phase, it must:
+1. Announce the phase as optional and briefly explain its purpose.
+2. Ask the cook whether to include it: "This phase is optional. Want to include it?"
+3. If the cook declines, skip the phase entirely and advance to the next one.
+4. If the cook accepts, execute it normally.
 
-### Sensor Checks
-Always specify `target` — the **actual/true temperature**, not an instrument-adjusted reading. Calibration is applied at runtime by the cook skill, which reads `calibration.md` and presents both values to the cook: "We want X°C (about Y°C on your thermocouple)." Protocols never contain instrument-specific offsets — they stay correct even when instruments are recalibrated or replaced.
+Example use: liquid reductions (milk, wine) in bolognese that improve the dish but can be skipped for simplicity.
+
+### Burner Settings
+Include explicit burner settings on steps that involve heat changes. Use plain language: `"high"`, `"medium"`, `"low"`, `"medium → low"`, `"off"`. Never assume the cook knows what burner setting produces a target temperature — tell them directly.
+
+### Sensor Targets
+Always specify the **actual/true temperature**, not an instrument-adjusted reading. Calibration is applied at runtime by the cook skill, which reads `calibration.md` and presents both values to the cook: "We want X°C (about Y°C on your thermocouple)." Protocols never contain instrument-specific offsets — they stay correct even when instruments are recalibrated or replaced.
+
+In the body, use bold format: `**Target: 90°C (TC)**`
 
 ### Scaling Principles
-Every ingredient carries a `scaling_principle` explaining the *why* behind the quantity. The LLM uses these to reason about scaling, not a formula engine.
-
-### Substitution Support
-Ingredients can list `substitutes` with notes on flavor/texture impact. The LLM reasons about downstream effects when substituting.
+The protocol carries `scaling_principle` logic in ingredients and a `scaling:` block in front matter. The LLM uses these to reason about scaling, not a formula engine.
 
 ### Briefings
-Every phase has a `briefing` field — delivered at phase entry and during preceding idle time as a pre-flight briefing.
+Every phase has a briefing paragraph — delivered at phase entry and during preceding idle time as a pre-flight briefing.
 
 ### Duration vs Duration Range
 `duration` is the expected time. `duration_range` is the acceptable window. The agent uses sensory cues and sensor data to decide when to actually transition, not just the clock.
 
-### Research File
-The optional `research` field lists companion Markdown files (in the same `protocols/` directory) containing curated science that informed the protocol — protein chemistry, critical control points, failure modes, technique rationale, food safety references. Can be a single string or a list. The recipe skill creates these alongside the protocol YAML. Any skill answering "why" questions about a protocol should load these files first (see CLAUDE.md).
+### Skills-Append-Over-Time Sections
+Three sections at the bottom of the protocol body accumulate knowledge from cooks over time:
+- **Debrief Notes** — written by the debrief skill after each cook (appended, never overwritten)
+- **Substitutions** — confirmed substitution outcomes from actual cooks
+- **Scaling Notes** — scaling experiences and adjustments from actual cooks
+
+These sections grow over time and are never manually edited. They form the dish's learning trail.
+
+### Science File as Arbiter
+If any step in the protocol body contradicts the science file (temperatures, safety targets, chemistry claims), the science file takes precedence. When the debrief skill proposes a protocol change, it must check the science file first and surface any contradiction to the cook before proceeding.
 
 ### Revision History
-The `revision_history` field tracks protocol evolution across cooks. Each entry records what changed, why, and which cook session motivated it.
+The `revision_history` field in front matter tracks protocol evolution across cooks. Each entry records what changed, why, and which cook session motivated it.
 
 ```yaml
 revision_history:
@@ -230,6 +277,7 @@ revision_history:
 - `changes` — list of human-readable descriptions of what was modified
 - `evidence` — the observation or cook feedback that justified the change
 
-The recipe skill initializes this as an empty list when creating new protocols.
-
 **Any skill that modifies a protocol MUST append a `revision_history` entry.** This includes the debrief skill (post-cook updates), the recipe skill (refine mode), or any other skill that changes protocol values. Entries are never removed — they form an audit trail.
+
+### Backward Compatibility
+The cook skill supports both `.md` and `.yaml` protocol formats. When loading a protocol, it tries `.md` first, then falls back to `.yaml`. New protocols are always created as `.md`.

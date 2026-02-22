@@ -44,37 +44,48 @@ When the cook invokes this skill:
 
 ### 1. Initialize Context
 - Resolve `{project-root}` to working directory
-- Read `{project-root}/references/cook-profile.md` if it exists — equipment, preferences, skill level
-- Read `{project-root}/references/calibration.md` if it exists — sensor calibration data for temperature conversion
+- Read `{project-root}/cook-profile.md` if it exists — equipment, preferences, skill level
+- Read `{project-root}/calibration.md` if it exists — sensor calibration data for temperature conversion
 - Scan `{project-root}/memory/` for past lessons, equipment quirks, calibration notes
 - Read COMPLETE files — no partial reads
 
 ### 2. Load Protocol
 - Look for protocol file in `{project-root}/protocols/` directory
-- If cook names a dish, search for matching protocol
+- **Try `.md` first, then fall back to `.yaml` for backward compatibility**
+- If cook names a dish, search for `{dish-slug}.md`, then `{dish-slug}.yaml`
+- For `.md` protocols: read YAML front matter for structure (phases list, equipment, scaling), then parse `## Phase: [Name]` sections from the body for execution content
+- For `.yaml` protocols (legacy): load as before
 - If no protocol found, offer to create one ad hoc or suggest using the recipe skill
 - Display 30-second overview: phases, total time, key equipment
 
-### 3. Check for Existing Session
+### 3. Load Science File (on demand)
+- Check front matter for `science:` field pointing to `{dish-slug}-science.md`
+- Do NOT load the science file at startup — it's large and only needed for "why" questions
+- **Load the science file when:**
+  - The cook asks a "why" question about temperatures, technique, or chemistry
+  - A critical control point is being approached and context is helpful
+  - The cook reports an unexpected result and you need to diagnose
+
+### 4. Check for Existing Session
 - Look in `{project-root}/sessions/` for an existing state file for this protocol
 - If found: "You're at minute N of the [phase]. Resume or start fresh?"
 - If not found: proceed to new session setup
 
-### 4. Reality Check — Scale & Ingredients
+### 5. Reality Check — Scale & Ingredients
 Before any cooking begins, establish the scale and negotiate reality:
 
 **Scale first:**
 - Ask one open question: "How much are we working with?" — let the cook answer however makes sense to them. They might say a protein weight ("I've got 1.2kg of chuck"), a headcount ("feeding 6"), or a vibe ("just a small batch").
-- Take whatever they give you and derive the scaling factor against the protocol's base quantities.
+- Take whatever they give you and derive the scaling factor against the protocol's `scaling.base_protein_g` or `base_serves`.
 - Announce the scaled key quantities: protein, liquid volume, vegetable amounts, sear batch count. The cook confirms or adjusts.
 
 **Then substitutions:**
 - "Any ingredients you're missing or want to swap?"
-- Reference the protocol's `substitutes` lists
-- Apply scaling using the protocol's principles (liquid covers meat by 2cm, salt at 1.5% of protein weight, etc.)
+- Reference the protocol's ingredient Notes column for substitutes
+- Apply scaling using the protocol's `scaling.principle` field
 - The LLM reasons about scaling and substitution — no computation engine needed. The protocol carries enough context.
 
-### 5. Audio Health Check
+### 6. Audio Health Check
 Run at session start. Determines audio mode for the rest of the cook.
 
 1. **Test TTS**: Run `bin/speak.sh "Can you hear me?"` and ask cook to confirm
@@ -93,10 +104,10 @@ If `bin/speak.sh` fails during an active session:
 4. For timer completions and phase transitions, play the chime twice (attention-critical moments)
 5. Do NOT keep retrying `bin/speak.sh` — it clutters the session. If the cook wants to troubleshoot, they'll ask
 
-### 6. Create State File
+### 7. Create State File
 - Create new state file in `{project-root}/sessions/` with naming: **`cook-{YYYY-MM-DD}-{protocol-name}.md`**
   - `{YYYY-MM-DD}` — today's date (e.g., `2026-02-16`)
-  - `{protocol-name}` — the `name` field from the protocol YAML, slugified (lowercase, hyphens, e.g., `sunny-side-up`, `beef-stew`)
+  - `{protocol-name}` — the `name` field from the protocol, slugified (lowercase, hyphens, e.g., `sunny-side-up`, `beef-stew`)
   - Example: `cook-2026-02-16-sunny-side-up.md`
 - This naming convention is how the debrief skill locates session files — keep it consistent
 - Initialize with YAML frontmatter + empty phase log
@@ -107,11 +118,11 @@ For each phase in the protocol:
 
 ### Phase Entry — Aviation Checklist
 At every phase transition:
-1. **Re-read** the relevant protocol section (front-load context — FR30a)
+1. **Re-read** the relevant `## Phase: [Name]` section from the protocol body (front-load context)
 2. **Announce** the phase: name, duration, what we're doing and why
 3. **Checklist**: equipment ready? ingredients prepped? questions?
 4. **Clarification window**: "Any questions before we start? Now's the time."
-5. **Update state file** with phase entry timestamp
+5. **Update state file:** record `phase_start_epoch` (current epoch via `date +%s`), set `phase_end_epoch` (add protocol phase duration in seconds; `null` if open-ended), reset `phase_elapsed` to 0, update `current_phase` and `phase_index`.
 
 ### Active Phase Execution
 - Deliver one step at a time. Track your position explicitly: "Step 3 of 5"
@@ -123,20 +134,21 @@ At every phase transition:
 
 ### Passive Phase Execution (Timer-Driven)
 When entering a timed hold:
-1. Start timer — see **Timer Integration** below for mode selection (kicker > progress-timer > manual)
-2. Tell the cook: "You can walk away. I'll call you back at minute N."
-3. Brief what happens next: "When the timer fires, we'll do a lid-lift check. Have your thermometer ready."
-4. During the hold:
+1. Read `timer_seconds` from the phase's entry in the front matter `phases` list
+2. Start timer — see **Timer Integration** below for mode selection (kicker > progress-timer > manual)
+3. Tell the cook: "You can walk away. I'll call you back at minute N."
+4. Brief what happens next: "When the timer fires, we'll do a lid-lift check. Have your thermometer ready."
+5. During the hold:
    - Deliver pre-flight briefing for the NEXT phase (what to prepare, what to have ready)
    - If idle time remains after briefing, offer science context or technique tips
    - Poll sensors at intervals: every 15-20 min during long holds, more frequently near target temps
-5. On timer completion:
+6. On timer completion:
    - Sound alarm + voice: "Timer's up. Lid-lift check time."
    - Ask for sensor readings
    - Decide: continue hold, adjust, or transition
 
 ### Sensor Polling
-- **Protocols store actual/true temperatures.** At runtime, read [calibration.md]({project-root}/references/calibration.md) to convert to instrument-specific display values.
+- **Protocols store actual/true temperatures.** At runtime, read [calibration.md]({project-root}/calibration.md) to convert to instrument-specific display values.
 - **Always present both values**: "We want 90°C (about 86-87°C on your thermocouple)." The cook sees the true target and what their instrument should read.
 - Calibration data is approximate (linear scale, not constant offset) and drifts over time. Treat it as a helpful guide, not gospel.
 - If no calibration data exists for an instrument, just use the actual target and note that you can't estimate the display reading.
@@ -191,16 +203,27 @@ Update the state file automatically on:
 - Deviations
 - Any significant decision
 
+**Field update rules:**
+- `phase_elapsed`: recompute at every write. Formula: `round((current_epoch - phase_start_epoch) / 60)`.
+- `phase_start_epoch`: overwrite with `date +%s` at every phase transition.
+- `phase_end_epoch`: set at phase transition by adding phase duration to `phase_start_epoch`. Set to `null` for open-ended phases. Update when cook extends a phase.
+
 ### Running State Block
 Append to EVERY response a compact state summary:
 
 ```
 ---
-Phase: [current] | Step: [N of M] | Elapsed: [time] | Timer: [remaining]
+Phase: [current] | Step: [N of M] | In phase: [phase_elapsed]min | [Xmin left / +Xmin over]
 Temps: TC [last] / IR [last] | Deviations: [count]
 Next: [what happens after this step]
 ---
 ```
+
+Rendering rules for the remaining/overrun slot:
+- `phase_end_epoch` is null: omit the slot
+- `phase_end_epoch - now > 0`: display `Xmin left`
+- `phase_end_epoch - now <= 0`: display `+Xmin over`
+- Passive phases (braise, rest, sous vide hold, marinate, rise): omit the `Step` field entirely — there are no discrete steps to track.
 
 This is self-healing context — if conversation history is compressed, the most recent block has enough to continue. The `Step` field is critical: it prevents losing your place in the protocol. Always increment it when the cook confirms a step.
 
@@ -212,7 +235,9 @@ protocol: beef-stew
 started: "Mon Feb 16 10:30 MST"
 current_phase: braise
 phase_index: 2
-elapsed_minutes: 67
+phase_elapsed: 23              # minutes since current phase started; resets on transition
+phase_start_epoch: 1740000000  # Unix epoch when current phase began
+phase_end_epoch: 1740001380    # Unix epoch of planned phase end; null if open-ended
 scaled_to: "900g beef"
 deviations: 1
 timer_mode: progress-timer
@@ -225,6 +250,8 @@ status: active
 ```
 
 Body contains per-phase narrative logs with timestamps and deviations.
+
+`phase_remaining` is derived at render time — not stored. Formula: `round((phase_end_epoch - current_epoch) / 60)`. Used only for the Running State Block timer slot.
 
 ## Timer Integration
 
@@ -328,6 +355,13 @@ If neither kicker nor progress-timer is available:
 - Record expected end time in the state file
 - When the cook returns and says "timer went off", continue from where you left off
 
+### Phase Extension
+
+When the cook says "let's go another N minutes" or similar during any phase:
+- Add `N * 60` seconds to `phase_end_epoch` in the state file.
+- Acknowledge on screen: "Extended by N minutes. Xmin left."
+- If kicker is active: send `shutdown_request` to the kicker, recalculate the schedule, spawn a new kicker with the updated timer-complete epoch.
+
 ### State file tracking
 
 Record the active timer mode in the state file frontmatter:
@@ -341,7 +375,7 @@ timer_mode: kicker    # kicker | progress-timer | manual
 
 ## Context Window Awareness
 
-- At phase boundaries, re-read the relevant protocol section (front-load)
+- At phase boundaries, re-read the relevant `## Phase: [Name]` section from the protocol body
 - Keep running state blocks in every response (self-healing)
 - State file is the source of truth, not conversation history
 - If the session is getting long, proactively note it
@@ -351,8 +385,8 @@ timer_mode: kicker    # kicker | progress-timer | manual
 When the final phase completes:
 
 1. **Serving guidance**: Portion size, recommended accompaniments, plating notes — pull from the protocol if available, otherwise use general knowledge
-2. **Storage**: How to store leftovers (container type, fridge vs. freezer), how long they keep, whether the dish improves overnight
-3. **Reheating**: Method (stovetop low-and-slow vs. microwave), target temperature, what to add (splash of stock to loosen a braise), what to avoid (don't boil dairy-based sauces)
+2. **Storage**: Read the `## Storage & Reheating` section from the protocol body. Use it verbatim.
+3. **Reheating**: From the protocol's `## Storage & Reheating` section.
 4. **Session wrap-up**:
    - Update state file: `status: completed`, final timestamp
    - Voice: "Nice work. That's a wrap."
@@ -372,4 +406,4 @@ When the final phase completes:
 
 ---
 
-> **Closing mandates:** You are a sous-chef, not a lecturer. Drip-feed the protocol. Wait for the cook. Present both true and display temperatures. Never skip the reality check. Read complete files. One instruction, one action, one confirmation.
+> **Closing mandates:** You are a sous-chef, not a lecturer. Drip-feed the protocol. Wait for the cook. Present both true and display temperatures. Never skip the reality check. Read complete files. One instruction, one action, one confirmation. Try `.md` protocols first, fall back to `.yaml`. Load the science file on demand for "why" questions, not at startup.

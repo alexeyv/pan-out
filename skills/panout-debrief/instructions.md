@@ -8,6 +8,7 @@ Before scanning files, greet the cook briefly — "Let's debrief! Loading sessio
 > - Never write to any file without the cook's explicit approval
 > - Always append to memory — never overwrite existing learnings
 > - Always add a revision_history entry when updating a protocol
+> - Science file is the arbiter — check it before proposing any protocol parameter change
 
 # Debrief Skill — Post-Cook Review & Learning Capture
 
@@ -34,7 +35,7 @@ You are not a judge. You are a mirror that helps the cook see what happened clea
 
 ### 1. Initialize Context
 - Resolve `{project-root}` to working directory
-- Read `{project-root}/references/cook-profile.md` if it exists — cook identity, equipment, preferences
+- Read `{project-root}/cook-profile.md` if it exists — cook identity, equipment, preferences
 - Read COMPLETE files — no partial reads
 
 ### 2. Find the Cook Session
@@ -50,15 +51,17 @@ Locate the session to debrief. Two paths:
 
 If no session state files exist, tell the cook: "I don't see any cook session state files in `{project-root}/sessions/`. We can still do a general debrief if you tell me what you cooked."
 
-### 3. Load the Context Trilogy
+### 3. Load the Context Quartet
 
-Load these three sources — they form the complete picture:
+Load these four sources — they form the complete picture:
 
 1. **Session state file** (`{project-root}/sessions/cook-*.md`) — the compact structured record. Read this first. It has timestamps, phase logs, sensor readings, deviations, and the protocol reference.
 
-2. **Protocol used** (`{project-root}/protocols/*.yaml`) — what was planned. The state file's frontmatter names the protocol. Load it to diff planned vs. actual.
+2. **Protocol used** (`{project-root}/protocols/*.md`, or `.yaml` for legacy) — what was planned. The state file's frontmatter names the protocol. Load it to diff planned vs. actual. For `.md` protocols, read both front matter and body.
 
-3. **Session log** (JSONL from `~/.claude/projects/{project-directory}/`) — the complete conversation. This is large. **Strategy**: read the state file first for the structured summary. Only dip into the JSONL for specific details — look for:
+3. **Science file** (`{project-root}/protocols/{dish-slug}-science.md`) — the science arbiter. Read it to understand the physics and chemistry that constrain any proposed protocol changes. Check the `science:` field in the protocol front matter for the filename.
+
+4. **Session log** (JSONL from `~/.claude/projects/{project-directory}/`) — the complete conversation. This is large. **Strategy**: read the state file first for the structured summary. Only dip into the JSONL for specific details — look for:
    - Cook's in-the-moment reactions and observations
    - Questions the cook asked (reveal confusion points)
    - Error recovery events
@@ -143,6 +146,24 @@ If the cook says "skip the interview" or "just use the logs", proceed directly t
 
 ---
 
+## Phase 2.5: Science Check — "Does the change hold up?"
+
+Before proposing any change to protocol parameters (temperatures, times, ratios), check the science file.
+
+**For each proposed protocol change:**
+1. Read the relevant section of the science file (Critical Control Points, Physics & Chemistry, Failure Modes)
+2. Check whether the proposed change is consistent with the science
+3. If the proposed change **contradicts** the science file:
+   - Surface the contradiction to the cook before proposing the change
+   - Example: "I was going to suggest increasing the braise temp to 95°C based on your experience, but the science file says above 95°C muscle fibers seize. Let me show you what it says..."
+   - Let the cook decide: update the science file if the cook's experience contradicts it, or keep the conservative science-file value
+4. If the proposed change is **consistent** with the science: proceed normally
+5. If the science file doesn't cover the specific parameter: note the gap and proceed with the cook's observed data
+
+The science file is the arbiter. When cook experience and science file conflict, surface the conflict — don't silently override either.
+
+---
+
 ## Phase 3: Write Learnings — "Update the knowledge base"
 
 ### 6. Draft Proposed Changes
@@ -155,7 +176,7 @@ Lessons and observations that apply to future cooks:
 - Technique learnings (e.g., "Searing in 3 batches instead of 2 gave better crust")
 - Timing discoveries (e.g., "Chuck at 900g needs 100min braise, not 90")
 - Flavor notes (e.g., "2 tbsp soy sauce was right for 900g protein")
-- Calibration discoveries (readings that suggest `{project-root}/references/calibration.md` needs recalibrating)
+- Calibration discoveries (readings that suggest `{project-root}/calibration.md` needs recalibrating)
 - Equipment behavior (e.g., "Dutch oven on burner 3 runs ~5C hotter than burner 1")
 - Standing preferences (e.g., "Prefers less salt", "Likes more garlic")
 
@@ -166,17 +187,22 @@ Lessons and observations that apply to future cooks:
 - Append to existing files. Use `## {Dish} — {Date}` headers to organize entries chronologically within each file.
 - Keep entries concise — one to three sentences per learning.
 
-**Group B: Protocol updates** (`{project-root}/protocols/*.yaml`)
+**Group B: Protocol updates** (`{project-root}/protocols/*.md`)
 
 Changes to the protocol backed by actual cook data:
-- Timing adjustments (with evidence: "braise took 100min for fork-tender at 900g")
-- Temperature target refinements
-- New or revised sensory cues discovered during the cook
-- Substitution notes that should live in the protocol
-- Scaling principle corrections
-- Step reordering or additions based on what worked
+- Front matter changes: update `phases[].timer_seconds`, `serves`, `total_time` in YAML
+- Body changes: update phase briefings, step instructions, sensory cues, temperature targets
+- Append to `## Debrief Notes` section in the body (don't overwrite — append with a dated entry)
+- Append confirmed substitutions to `## Substitutions` section
+- Append scaling experiences to `## Scaling Notes` section
 
-**When updating a protocol, always append to `revision_history`.** This is a required convention for any skill that modifies a protocol — see the Revision History section of [protocol-format.md](../../references/protocol-format.md) for the entry format and field details.
+**When updating a protocol, always append to `revision_history` in the front matter.** This is a required convention for any skill that modifies a protocol — see the Revision History section of [protocol-format.md](../../references/protocol-format.md) for the entry format and field details.
+
+**Science file updates** require explicit cook approval:
+- If the cook's experience directly contradicts a science file claim (e.g., a different optimal temperature was observed), propose updating the science file too
+- Show the specific section and proposed change
+- Note that this is changing the arbiter — it has downstream effects on all future protocol reviews
+- Only update with explicit approval
 
 **Group C: Cook profile** (`{project-root}/cook-profile.md`)
 
@@ -220,6 +246,7 @@ Show all proposed changes grouped by destination. For each group:
 1. Name the destination file
 2. Show the exact content to be added or changed
 3. For protocol changes, show a before/after diff
+4. For science file changes, show the existing section and proposed revision
 
 Example presentation:
 
@@ -230,10 +257,14 @@ Example presentation:
 Add under "## Beef Stew":
 - "900g chuck needs 100min braise for fork-tender, not the 90min in protocol. Test at 85min."
 
-### B. Protocol — {project-root}/protocols/beef-stew.yaml
-Change braise phase duration: "90m" -> "100m"
-Change timer duration_seconds: 5400 -> 6000
-Add to braise briefing: "At 900g, expect closer to 100 minutes."
+### B. Protocol — {project-root}/protocols/beef-stew.md
+Front matter: change braise phase timer_seconds: 5400 -> 6000
+Body: update Phase: Collagen Conversion briefing to add "At 900g, expect closer to 100 minutes."
+Body: append to ## Debrief Notes: "2026-02-16 — Braise needed 100min for 900g chuck. Extended timer."
+Revision history: append entry for this cook session.
+
+### B2. Science file — {project-root}/protocols/beef-stew-science.md
+No changes needed — the science file already notes 75-100 minutes as the range for 900g chuck.
 
 ### C. Cook Profile — {project-root}/cook-profile.md
 [Create new file with content...]
@@ -248,11 +279,12 @@ Approve all, or tell me which groups to skip or modify.
 
 Write only what the cook approves. For each file:
 
-- **Existing files**: Read the current content first, then append or edit as appropriate
-- **New files**: Create with the approved content
-- **Protocol YAML**: Be precise with YAML formatting. Read the file, make targeted edits, write it back. Don't break the structure.
+- **Existing `.md` protocol files**: Read the current content first, then edit front matter YAML precisely and append to body sections as appropriate. Don't break the front matter structure.
+- **Science files**: Edit with surgical precision — only the specific sections that need updating.
+- **Memory files**: Append new sections below existing content.
+- **New files**: Create with the approved content.
 
-After writing, confirm what was saved: "Updated `{project-root}/memory/lessons.md` and `{project-root}/protocols/beef-stew.yaml`. Cook profile created at `{project-root}/cook-profile.md`."
+After writing, confirm what was saved: "Updated `{project-root}/memory/lessons.md` and `{project-root}/protocols/beef-stew.md`. Revision history appended."
 
 ---
 
@@ -302,4 +334,4 @@ These are conventions, not rigid schema. If a learning doesn't fit neatly, creat
 
 ---
 
-> **Closing mandates:** Mirror, not judge. Never write without approval. Append, never overwrite. Always add revision_history. Read complete files. The cook decides what gets saved.
+> **Closing mandates:** Mirror, not judge. Never write without approval. Append, never overwrite. Always add revision_history. Read complete files. Science file is the arbiter — check it before any protocol parameter change, surface contradictions to the cook, require explicit approval to update it. The cook decides what gets saved.
