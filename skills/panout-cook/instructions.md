@@ -334,11 +334,29 @@ Body contains per-phase narrative logs with timestamps and deviations.
 
 Three timer modes, in order of preference:
 
+**Timer mode selection (evaluate in order):**
+1. **Kicker (Mode 1):** Preferred. Use when running in a Claude Code team context, or when `TeamCreate` succeeds. Record `timer_mode: kicker` in state file.
+2. **Progress timer (Mode 2):** Fallback when not in a team context, or when `TeamCreate` fails. Use if `bin/progress-timer.sh` is available. Record `timer_mode: progress-timer`.
+3. **Manual (Mode 3):** Last resort. Tell the cook to set a phone timer. Record `timer_mode: manual`.
+
+After selecting a mode, do not switch mid-hold unless the selected mode fails (e.g., kicker crashes — fall back to manual and log it in the state file).
+
 ### Mode 1: Kicker Agent (preferred)
 
 Use when running in a Claude Code team context. The kicker is a haiku-model agent that runs a bash heartbeat and messages you on schedule.
 
 **At passive phase entry, do the following in order:**
+
+#### Step 0: Establish team context
+
+Before computing any schedule or creating any tasks, verify you are operating within a Claude Code team:
+
+- If you are already running as part of a named team (e.g., the cook was invoked inside an existing team context), proceed directly to Step 1.
+- If no team exists yet, call `TeamCreate` now with a meaningful name (e.g., `sous-vide-cook`, `beef-stew-cook`). Use the session name derived from today's date and protocol name.
+
+**Critical:** All `TaskCreate` calls for schedule events MUST happen within the team context. Tasks created outside a team go to the global task list and will not survive team cleanup — the kicker will not be able to find them by task ID, and events will silently drop. If `TeamCreate` fails or is unavailable, fall back to Mode 2 (progress-timer) rather than proceeding with kicker setup against the global list.
+
+**Multiple passive phases:** If a prior passive phase's kicker agent is still running (e.g., the first hold ended early), send it a `shutdown_request` before spawning a new kicker for the next passive phase. One kicker active at a time.
 
 #### Step 1: Compute the schedule
 
@@ -357,7 +375,14 @@ For holds ≤ 30 minutes:
 
 #### Step 2: Create tasks for each event
 
-Use TaskCreate for each scheduled event. The task description must contain FULL context — what to check, what to say, sensory cues, next-step prep. This is the anti-lost-in-the-middle pattern: when the kicker fires the event minutes or hours later, the lead reads the task description fresh and has everything needed regardless of what got compressed out of conversation history.
+Use TaskCreate for each scheduled event. Task descriptions must be self-contained — when the kicker fires this task hours later, the cook lead may have lost context to compression. Write each task description as if the lead has no memory of the current session:
+
+| Event type | Required content in task description |
+|------------|--------------------------------------|
+| Progress ping | Phase name, elapsed/remaining time, what to check (sensor type, expected range), what to say to cook |
+| Pre-flight briefing | Next phase name, full equipment checklist, ingredient prep steps, sequence preview, key sensory cues, what can go wrong |
+| Ready check | Next phase name, what "staged" means (what the cook should have ready), confirmation prompt to deliver |
+| Timer complete | Next phase name, immediate actions (chime, speak), sensor check if needed, first 1-2 steps of next phase |
 
 Task naming convention:
 - `KICKER: Progress ping — {N} min elapsed`
