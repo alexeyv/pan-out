@@ -52,7 +52,8 @@ When the cook invokes this skill:
 ### 2. Load Protocol
 - Look for protocol file in `{project-root}/protocols/` directory
 - **Try `.md` first, then fall back to `.yaml` for backward compatibility**
-- If cook names a dish, search for `{dish-slug}.md`, then `{dish-slug}.yaml`
+- If the cook passed a dish name as an argument, search for it. If no argument, ask what we're cooking
+- Search for `{dish-slug}.md`, then fall back to `{dish-slug}.yaml`
 - For `.md` protocols: read YAML front matter for structure (phases list, equipment, scaling), then parse `## Phase: [Name]` sections from the body for execution content
 - For `.yaml` protocols (legacy): load as before
 - If no protocol found, offer to create one ad hoc or suggest using the recipe skill

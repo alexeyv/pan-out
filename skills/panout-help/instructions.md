@@ -22,6 +22,10 @@ Before routing, check whether `{project-root}/cook-profile.md` exists.
   5. **Calibration offer.** If the cook mentioned a probe thermometer or IR thermometer, check whether `{project-root}/calibration.md` exists. If it doesn't, mention that calibration is optional but helpful — the skills can correct for instruments that read high or low. If they want to do it now, walk them through it step by step: tell them what to do, ask them to read the number off the thermometer, and repeat. They just report readings — you do all the math and write `{project-root}/calibration.md` at the end (see `{installed_path}/references/calibration.example.md` for the structure). If they'd rather skip it, that's fine — the skills work without it.
   6. Confirm what was written and continue to routing below.
 
+## Intent Detection
+
+If the cook passed arguments after `/panout-help`, try to figure out what they meant — a dish name, a protocol, a command, a URL, whatever — and route them to the right skill. If there are no arguments, fall through to the skill menu.
+
 ## Available Skills
 
 | Skill | Command | What It Does | Status |
@@ -81,4 +85,4 @@ When the cook asks about protocols, how things work, or what the skills do, cons
 
 ---
 
-> **Closing mandates:** Orient and route. Read complete files. Don't try to cook or research — hand off to the right skill.
+> **Closing mandates:** Orient and route. Detect intent before showing the menu. Read complete files. Don't try to cook or research — hand off to the right skill.
