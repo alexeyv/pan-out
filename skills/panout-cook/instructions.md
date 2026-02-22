@@ -157,7 +157,7 @@ When entering a timed hold:
 
 ## Forward-Only Rule
 
-**Never repeat a confirmed step.** Once the cook says "done", "next", "ready", or otherwise confirms a step is complete, that step is finished. Move forward. If you're unsure whether a step was confirmed, check the running state block — it's the source of truth for your position.
+**Never repeat a confirmed step.** Once the cook says "done", "next", "ready", or otherwise confirms a step is complete, that step is finished. Move forward. If you're unsure whether a step was confirmed, check the state file — it's the source of truth for your position.
 
 If the cook reports that time has passed (e.g., "90 minutes done" or "timer went off"), accept it and advance to the next phase. Do not re-verify preceding steps.
 
@@ -208,24 +208,101 @@ Update the state file automatically on:
 - `phase_start_epoch`: overwrite with `date +%s` at every phase transition.
 - `phase_end_epoch`: set at phase transition by adding phase duration to `phase_start_epoch`. Set to `null` for open-ended phases. Update when cook extends a phase.
 
-### Running State Block
-Append to EVERY response a compact state summary:
+### Status Banner
+
+**Every response begins with the two-element status banner — always at the top, before any prose.**
+
+#### Element 1: Heavy rule
+
+````
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+````
+
+This is a fenced code block containing 63 `━` characters. Do not use `---` — it renders as dashes, not a line. The `━` inside a code block renders as a solid green line in the Claude Code terminal.
+
+#### Element 2: Banner text (immediately below the code block, in plain markdown)
 
 ```
----
-Phase: [current] | Step: [N of M] | In phase: [phase_elapsed]min | [Xmin left / +Xmin over]
-Temps: TC [last] / IR [last] | Deviations: [count]
-Next: [what happens after this step]
----
+**{Dish Name}** | PHASE {N}: *{Phase Label}* | {HH:MM} | {timer}
 ```
 
-Rendering rules for the remaining/overrun slot:
-- `phase_end_epoch` is null: omit the slot
-- `phase_end_epoch - now > 0`: display `Xmin left`
-- `phase_end_epoch - now <= 0`: display `+Xmin over`
-- Passive phases (braise, rest, sous vide hold, marinate, rise): omit the `Step` field entirely — there are no discrete steps to track.
+Fields:
+- **Dish Name** — bold, title-cased from protocol `name` field
+- **PHASE {N}: *{Phase Label}*** — phase number (1-indexed from protocol), italic phase name
+- **{HH:MM}** — wall-clock time from `date +%H:%M` (run at start of every turn)
+- **{timer}** — computed from the state file's `phase_end_epoch` field:
+  - `remaining = phase_end_epoch - current_epoch` (seconds)
+  - Positive: `Xmin left` (round to nearest minute)
+  - Zero or negative: `+Xmin over` (absolute value, round up)
+  - `phase_end_epoch` is null: omit timer slot entirely (open-ended phase)
+  - If kicker provides remaining time in its message: use it directly
 
-This is self-healing context — if conversation history is compressed, the most recent block has enough to continue. The `Step` field is critical: it prevents losing your place in the protocol. Always increment it when the cook confirms a step.
+The banner text is **outside** the code block — so `**bold**` and `*italic*` render with visual weight.
+
+#### Example banners
+
+Active phase, open-ended (no `phase_end_epoch`):
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+**Herby Rustic Sous Vide Chicken** | PHASE 1: *Mise en Place* | 06:14
+
+Passive phase, hold in progress:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+**Herby Rustic Sous Vide Chicken** | PHASE 2: *Bath* | 07:34 | 49min left
+
+Passive phase, late in hold:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+**Herby Rustic Sous Vide Chicken** | PHASE 2: *Bath* | 08:18 | 5min left
+
+Active phase, running over expected duration:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+**Herby Rustic Sous Vide Chicken** | PHASE 3: *Sear* | 08:47 | +4min over
+
+#### Self-healing context
+
+The banner is the minimum context needed to resume after conversation compression. If history is compressed, the most recent banner tells you: dish, phase, and whether a timer is running. Pair it with the state file for full context recovery.
+
+### Task List Formatting
+
+Use the Claude Code task list as a structured cook plan. Follow these naming conventions so tasks remain identifiable when the tool reorders them by status.
+
+#### Naming conventions
+
+| Task type | Subject format | Example |
+|-----------|---------------|---------|
+| Phase-level task | `PHASE {N} {Phase Name} — {key param}` | `PHASE 2 Sous Vide Bath — 63°C, 1h 45m` |
+| Sub-task within a phase | `PHASE {N}: ↳ {what}` | `PHASE 2: ↳ Bath temp check (~07:20)` |
+| Kicker events | `KICKER: {event type} — {detail}` | `KICKER: Pre-flight briefing for Sear` |
+| Session milestone | `SESSION CLOSE` | `SESSION CLOSE` |
+
+The `PHASE {N}:` prefix on sub-tasks is critical — the task tool groups by status, not logical order. Without the prefix, sub-tasks are visually orphaned from their phase when the tool reorders them.
+
+#### Task descriptions must carry full protocol detail
+
+Each task description must be self-contained — write it as if the LLM reading it has no other context. Include:
+- Equipment needed
+- Sequence of steps
+- Sensory cues (what to look for, smell, hear)
+- Key temperatures (true target + calibration-adjusted display reading)
+- Failure modes and recovery
+
+This is the anti-lost-in-the-middle pattern: when the kicker fires an event 90 minutes after the task was created, the task description is fresh context regardless of what got compressed.
+
+#### Tool limitations (work around these)
+
+- Task IDs assigned in creation order — create tasks in logical execution order
+- Tool groups by status (in_progress → pending → completed), not logical order — use `PHASE N:` prefix workaround
+- No native sub-task hierarchy — `↳` naming is the convention
+- Completed tasks sink to the bottom — `PHASE N:` prefix keeps them identifiable after completion
 
 ### State File Template
 
@@ -251,7 +328,7 @@ status: active
 
 Body contains per-phase narrative logs with timestamps and deviations.
 
-`phase_remaining` is derived at render time — not stored. Formula: `round((phase_end_epoch - current_epoch) / 60)`. Used only for the Running State Block timer slot.
+`phase_remaining` is derived at render time — not stored. Formula: `round((phase_end_epoch - current_epoch) / 60)`. Used only for the banner timer slot.
 
 ## Timer Integration
 
@@ -376,7 +453,7 @@ timer_mode: kicker    # kicker | progress-timer | manual
 ## Context Window Awareness
 
 - At phase boundaries, re-read the relevant `## Phase: [Name]` section from the protocol body
-- Keep running state blocks in every response (self-healing)
+- Keep status banner in every response (self-healing). The banner is the minimal context needed to resume if history is compressed.
 - State file is the source of truth, not conversation history
 - If the session is getting long, proactively note it
 
