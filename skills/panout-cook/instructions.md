@@ -25,7 +25,7 @@ Two modes, determined by the current phase:
 ### Push Mode (passive phases: braise, rest, marinate, rise)
 Timer is running. Cook may have left the kitchen.
 - Timer fires → read state file + protocol → push voice summary + screen detail
-- Deliver pre-flight briefings for the next phase during dead time
+- Deliver pre-flight briefing for the next phase immediately at passive phase entry
 - Poll sensors at plan-defined intervals ("What's the TC reading?")
 - Tell the cook when it's safe to walk away
 - Call the cook back when attention is needed
@@ -144,9 +144,8 @@ When entering a timed hold:
 1. Read `timer_seconds` from the phase's entry in the front matter `phases` list
 2. Start timer — see **Timer Integration** below for mode selection (kicker > progress-timer > manual)
 3. Tell the cook: "You can walk away. I'll call you back at minute N."
-4. Brief what happens next: "When the timer fires, we'll do a lid-lift check. Have your thermometer ready."
+4. Deliver the mandatory pre-flight briefing for the NEXT phase now — equipment to stage, ingredients to prep, sequence preview, key sensory cues, what can go wrong. This is not a one-line headline; give the cook the full briefing so they can prepare while the hold runs.
 5. During the hold:
-   - Deliver pre-flight briefing for the NEXT phase (what to prepare, what to have ready)
    - If idle time remains after briefing, offer science context or technique tips
    - Poll sensors at intervals: every 15-20 min during long holds, more frequently near target temps
 6. On timer completion:
@@ -371,7 +370,7 @@ Calculate absolute epoch timestamps for each event. Use `date +%s` to get the cu
 
 For holds > 30 minutes:
 - Progress pings every 10 minutes starting at minute 10
-- Pre-flight briefing for the next phase at T-15 minutes
+- Pre-flight refresh (condensed re-briefing) at T-15 minutes
 - Ready check at T-5 minutes
 - Timer complete at T+0
 
@@ -435,7 +434,7 @@ When you receive a message from the kicker:
 | Event | Action |
 |-------|--------|
 | Progress ping | Deliver status banner. Optionally poll sensors or offer a science tip. |
-| Pre-flight briefing | Deliver the FULL pre-flight briefing for the next phase — equipment, ingredients, sequence, sensory cues. This is mandatory, not optional. |
+| Pre-flight briefing | Re-deliver a condensed pre-flight refresh for the next phase — the cook heard the full briefing at phase entry (Step 4) but may have forgotten details after a long hold. Hit the key points: equipment, ingredients, sequence. |
 | Ready check | Ask the cook: "Are you staged and ready for [next phase]?" Wait for confirmation. |
 | Timer complete | Play `bin/chime.sh alarm` + `bin/speak.sh "Timer complete"`. Advance to next phase. |
 
@@ -455,7 +454,7 @@ bin/progress-timer.sh <total_seconds> "<label>"
 
 Run in background. Timer logs to `/tmp/braise_timer.log`. Check `tail -1 /tmp/braise_timer.log` to report elapsed time. Timer speaks TTS updates every minute and plays completion alarm.
 
-**Limitation:** Cook must stay near the screen. You cannot proactively message them or deliver pre-flight briefings during the hold.
+**Limitation:** Cook must stay near the screen. You cannot proactively message them, deliver mid-hold progress pings, or re-brief at T-15. (The full pre-flight briefing is already delivered at phase entry in Step 4.)
 
 ### Mode 3: Manual Timer (last resort)
 
