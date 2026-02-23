@@ -38,6 +38,7 @@ When the cook invokes this skill (directly or via a dish name):
 ### 1. Initialize Context
 - Resolve `{project-root}` to working directory
 - Read `{project-root}/cook-profile.md` if it exists — equipment, preferences, skill level
+- Read `{project-root}/docs/cooking-science-glossary.md` if it exists — terms defined here are assumed knowledge in science files
 - Scan `{project-root}/memory/` for past lessons relevant to this dish or technique
 - Read COMPLETE files — no partial reads
 
@@ -91,6 +92,8 @@ Run 3-6 targeted searches per dish. Tailor queries to the dish's key techniques:
 
 ### 7. Synthesize Science File
 Compile findings into a structured science document. Write it for this cook's profile — strong physics/math background, developing chemistry knowledge, building cooking experience.
+
+**Glossary terms are assumed knowledge.** If a term is defined in `{project-root}/docs/cooking-science-glossary.md`, use it freely in science files without re-defining it. For example, don't explain what the Maillard reaction is every time — just reference it by name. Reserve explanation space for dish-specific nuances (e.g., why Maillard matters more for this particular cut, or how this dish's moisture level affects it). If the glossary file doesn't exist, fall back to brief inline definitions as before.
 
 **Science file structure:**
 
