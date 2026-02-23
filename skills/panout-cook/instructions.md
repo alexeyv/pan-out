@@ -395,6 +395,8 @@ For holds ≤ 30 minutes:
 
 **Minimum gap:** After computing all events, walk the list in chronological order. If any event falls within 60 seconds of the preceding event, push it forward to exactly 60 seconds after the earlier one. This prevents the heartbeat's 60-second tick cap from batching two events into a single invocation. Countdown pings (every 1 minute from T-4 to T-1) already satisfy this constraint naturally.
 
+**Short-hold floor rule:** For holds ≤ 5 minutes, omit the ready check and any countdown pings that would fall at or before the phase start time. Only schedule countdown pings for whole minutes that fall strictly after phase start, plus the timer-complete event. The pre-flight briefing delivered at phase entry is sufficient for short holds.
+
 #### Step 2: Create tasks for each event
 
 Use TaskCreate for each scheduled event. Task descriptions must be self-contained — when the kicker fires this task hours later, the cook lead may have lost context to compression. Write each task description as if the lead has no memory of the current session:
