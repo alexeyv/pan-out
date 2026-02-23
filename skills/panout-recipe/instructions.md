@@ -229,7 +229,42 @@ Run through this checklist before presenting the protocol. Every item must pass:
 - [ ] **Scaling block**: Front matter has `scaling:` with `base_serves`, `base_protein_g`, `principle`
 - [ ] **Format compliance**: Structure matches [protocol-format.md](../../references/protocol-format.md) and beef-stew.md gold standard
 
-### 14. Present Protocol for Review
+### 14. Adversarial Review
+After the validation checklist passes, re-read the protocol and science file as a skeptic — someone who will actually cook this dish and needs every detail nailed down. The validation checklist (step 13) confirms structural completeness; this step audits substantive quality.
+
+**Review dimensions:**
+
+1. **Safety validation depth** — Is every food-safety claim actually validated for the protocol's parameters? A pasteurization temp is not enough: check that stated times are valid for the stated thickness/weight range. If the protocol allows a range (e.g., "breasts up to 30mm"), the safety hold must cover the worst case. Flag any safety claim that is asserted but not demonstrated.
+
+2. **Quantity precision** — Scan every ingredient quantity for ambiguity that would force the cook to guess. Salt, leaveners, and thickeners in volumetric measures (tsp/tbsp) without weight equivalents are the most common offenders. Dressing ratios specified as "to taste" without a starting ratio are another. If the quantity is precision-sensitive, it needs a weight or a tight range.
+
+3. **Batch and scaling mechanics** — For protocols serving >2, check that high-heat steps (sear, saute) specify batch sizes, hold strategy between batches, and whether timing changes. A sear step that says "sear the chicken" for a 4-serving protocol without mentioning batches will fail at the stove.
+
+4. **Storage and reheating** — The `## Storage & Reheating` section must have real content, not just a placeholder heading. At minimum: how long it keeps, how to store, and how to reheat without ruining the texture. If the dish genuinely doesn't store well, say so explicitly rather than leaving the section empty.
+
+5. **Contingency coverage** — Every phase should have at least one "if X goes wrong, do Y" note for its most likely failure mode. A sear phase needs a smoke/burning recovery note. A braise phase needs a "liquid too low" note. A pasteurization phase needs an "undertemp" note. These don't need to be exhaustive — one high-probability contingency per phase.
+
+6. **Science-protocol consistency** — Spot-check that temperature targets, timing ranges, and technique rationale in the protocol body match what the science file says. Drift happens during compilation — a science file might say "85-90°C liquid" while the protocol step says "90°C." If they conflict, reconcile before presenting.
+
+7. **First-cook completeness** — Read the protocol as if the cook has never made this dish. Is there any step where they'd need to stop and search for information not in the protocol? Common gaps: how to know when oil is hot enough for a sear, what "fond is mahogany" looks like if you've never seen fond, how much liquid reduction is "reduced by half." Sensory cues must be concrete enough for a first attempt.
+
+**Resolution rules:**
+- **Clear-cut gaps** (missing weight equivalents, empty Storage section, absent contingency): fix them in place without prompting the cook.
+- **Design decisions** (batch size strategy, storage scope, alternative technique): flag for the cook in the review output.
+- **Science conflicts**: always flag — never silently resolve a disagreement between the science file and the protocol.
+
+**Output:** Present findings as a labeled block:
+
+> **Adversarial Review**
+> - {list of issues found and how each was resolved or flagged}
+
+If the review is clean, note it briefly:
+
+> **Adversarial Review:** No issues found.
+
+Do not skip this step. Do not run it silently without reporting. The cook should always see what the review caught.
+
+### 15. Present Protocol for Review
 Show the cook a summary before writing the file:
 
 - Phase count and names
@@ -244,7 +279,7 @@ Ask: "Ready to save? Or want to adjust anything?"
 
 ## Phase 4: Finalize — "Save and hand off"
 
-### 15. Write Files
+### 16. Write Files
 Write both artifacts to `{project-root}/protocols/`:
 
 1. **`{project-root}/protocols/{dish-slug}-science.md`** — the science file
@@ -260,7 +295,7 @@ The protocol's `science` field must point to the science file:
 science: "{dish-slug}-science.md"
 ```
 
-### 16. Confirm and Hand Off
+### 17. Confirm and Hand Off
 After saving:
 - Confirm both files were written successfully
 - Display a final summary: phases, total time, equipment, serves
