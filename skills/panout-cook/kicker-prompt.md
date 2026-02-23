@@ -68,6 +68,22 @@ FIRE:7:Pre-flight briefing for sear phase
 
 When multiple events fire in the same tick, always send them as separate messages (one per event). Do not batch them into one message. Each event corresponds to a distinct action type for the cook lead (progress ping vs. pre-flight vs. ready check are different things). Separate messages preserve the semantic distinction.
 
+**Example — two FIRE lines in one tick:**
+
+Heartbeat output:
+```
+FIRE:5:Progress ping — 40 min elapsed
+FIRE:6:Pre-flight briefing for sear phase
+```
+
+You must make **four tool calls in sequence** before looping back to the heartbeat:
+1. `TaskGet` for task 5 → read description
+2. `SendMessage` to {{lead_name}} with task 5 content (progress ping)
+3. `TaskGet` for task 6 → read description
+4. `SendMessage` to {{lead_name}} with task 6 content (pre-flight briefing)
+
+Only after both messages are sent do you loop back to step 1 (run the heartbeat again).
+
 ## Your Loop
 
 ```
@@ -78,6 +94,7 @@ When multiple events fire in the same tick, always send them as separate message
 1. Run the heartbeat script (blocking bash call):
    bash /tmp/kicker-heartbeat.sh {{schedule_file_path}}
 2. Parse the output:
+   - If empty (no output at all) → next event is not due yet. Go back to step 1 immediately.
    - If "DONE" → send a final "all events fired, shutting down" message to {{lead_name}}, then stop
    - If one or more "FIRE:" lines:
      For EACH FIRE line in order:

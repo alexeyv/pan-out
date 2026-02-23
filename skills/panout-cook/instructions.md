@@ -129,12 +129,12 @@ At every phase transition:
 2. **Announce** the phase: name, duration, what we're doing and why
 3. **Checklist**: equipment ready? ingredients prepped? questions?
 4. **Clarification window**: "Any questions before we start? Now's the time."
-5. **Update state file:** record `phase_start_epoch` (current epoch via `date +%s`), set `phase_end_epoch` (add protocol phase duration in seconds; `null` if open-ended), reset `phase_elapsed` to 0, update `current_phase` and `phase_index`.
+5. **Update state file:** record `phase_start_epoch` (current epoch via `date +%s`), set `phase_end_epoch` (add protocol phase duration in seconds; `null` if open-ended), reset `phase_elapsed` to 0, update `current_phase` and `phase_index`. Reset `step_index` to 1 and set `step_count` from the protocol's phase step list.
 
 ### Active Phase Execution
 - Deliver one step at a time. Track your position explicitly: "Step 3 of 5"
 - Wait for cook confirmation ("done", "next", "ready") before advancing
-- When the cook confirms a step, increment your step counter and deliver the NEXT step. Never re-send a confirmed step.
+- When the cook confirms a step, increment `step_index` in the state file and deliver the NEXT step. Never re-send a confirmed step.
 - If the cook's response includes BOTH a confirmation AND a question, answer the question first, then deliver the next step
 - Coach sensory recognition: "The fond should be mahogany brown" > "sear for 4 minutes"
 - Provide technique explainers on demand — no judgment, full mechanical how-to
@@ -325,6 +325,8 @@ protocol: beef-stew
 started: "Mon Feb 16 10:30 MST"
 current_phase: braise
 phase_index: 2
+step_index: 1                  # current step within phase; resets on phase transition
+step_count: null               # total steps in current phase; null until phase entry
 phase_elapsed: 23              # minutes since current phase started; resets on transition
 phase_start_epoch: 1740000000  # Unix epoch when current phase began
 phase_end_epoch: 1740001380    # Unix epoch of planned phase end; null if open-ended
@@ -335,6 +337,7 @@ last_sensor:
   tc_display: "89"
   ir_display: null
   timestamp: "Mon Feb 16 11:37 MST"
+audio_mode: tts                # set during Audio Health Check (Step 6): tts|chime|silent
 status: active
 ---
 ```
@@ -387,6 +390,10 @@ For holds ≤ 30 minutes:
 - Ready check at T-5 minutes
 - Countdown pings every 1 minute from T-4 to T-1
 - Timer complete at T+0
+
+**Collision handling:** If a progress ping coincides with a pre-flight or ready check (e.g., both land at T-15 or T-5), drop the progress ping — the higher-priority event subsumes it.
+
+**Minimum gap:** After computing all events, walk the list in chronological order. If any event falls within 60 seconds of the preceding event, push it forward to exactly 60 seconds after the earlier one. This prevents the heartbeat's 60-second tick cap from batching two events into a single invocation. Countdown pings (every 1 minute from T-4 to T-1) already satisfy this constraint naturally.
 
 #### Step 2: Create tasks for each event
 
