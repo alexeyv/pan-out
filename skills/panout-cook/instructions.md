@@ -240,7 +240,8 @@ Fields:
 - **{HH:MM}** — wall-clock time from `date +%H:%M` (run at start of every turn)
 - **{timer}** — computed from the state file's `phase_end_epoch` field:
   - `remaining = phase_end_epoch - current_epoch` (seconds)
-  - Positive: `Xmin left` (round to nearest minute)
+  - Positive, ≥ 5 minutes: `Xmin left` (round to nearest minute)
+  - Positive, < 5 minutes: `M:SS left` (e.g., `4:30 left`, `0:45 left`)
   - Zero or negative: `+Xmin over` (absolute value, round up)
   - `phase_end_epoch` is null: omit timer slot entirely (open-ended phase)
   - If kicker provides remaining time in its message: use it directly
@@ -266,6 +267,12 @@ Passive phase, late in hold:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 **Herby Rustic Sous Vide Chicken** | PHASE 2: *Bath* | 08:18 | 5min left
+
+Passive phase, countdown (under 5 minutes):
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+**Herby Rustic Sous Vide Chicken** | PHASE 2: *Bath* | 08:21 | 2:15 left
 
 Active phase, running over expected duration:
 ```
@@ -372,11 +379,13 @@ For holds > 30 minutes:
 - Progress pings every 10 minutes starting at minute 10
 - Pre-flight refresh (condensed re-briefing) at T-15 minutes
 - Ready check at T-5 minutes
+- Countdown pings every 1 minute from T-4 to T-1
 - Timer complete at T+0
 
 For holds ≤ 30 minutes:
 - Progress pings every 5 minutes
 - Ready check at T-5 minutes
+- Countdown pings every 1 minute from T-4 to T-1
 - Timer complete at T+0
 
 #### Step 2: Create tasks for each event
@@ -388,12 +397,14 @@ Use TaskCreate for each scheduled event. Task descriptions must be self-containe
 | Progress ping | Phase name, elapsed/remaining time, what to check (sensor type, expected range), what to say to cook |
 | Pre-flight briefing | Next phase name, full equipment checklist, ingredient prep steps, sequence preview, key sensory cues, what can go wrong |
 | Ready check | Next phase name, what "staged" means (what the cook should have ready), confirmation prompt to deliver |
+| Countdown ping | Remaining time (M:SS), phase name, brief reminder of what to have ready |
 | Timer complete | Next phase name, immediate actions (chime, speak), sensor check if needed, first 1-2 steps of next phase |
 
 Task naming convention:
 - `KICKER: Progress ping — {N} min elapsed`
 - `KICKER: Pre-flight briefing for {next_phase}`
 - `KICKER: Ready check — cook staged for {next_phase}?`
+- `KICKER: Countdown — {N}min left`
 - `KICKER: Timer complete — begin {next_phase}`
 
 #### Step 3: Write the schedule file
@@ -436,6 +447,7 @@ When you receive a message from the kicker:
 | Progress ping | Deliver status banner. Optionally poll sensors or offer a science tip. |
 | Pre-flight briefing | Re-deliver a condensed pre-flight refresh for the next phase — the cook heard the full briefing at phase entry (Step 4) but may have forgotten details after a long hold. Hit the key points: equipment, ingredients, sequence. |
 | Ready check | Ask the cook: "Are you staged and ready for [next phase]?" Wait for confirmation. |
+| Countdown ping | Deliver status banner with M:SS remaining. Brief verbal reminder via TTS: "[N] minutes left." |
 | Timer complete | Play `bin/chime.sh alarm` + `bin/speak.sh "Timer complete"`. Advance to next phase. |
 
 #### Kicker teardown
