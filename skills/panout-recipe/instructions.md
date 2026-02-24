@@ -139,8 +139,6 @@ Wait for feedback. Revise if needed. Do not proceed to protocol compilation unti
 
 ## Phase 3: Protocol Compilation — "Build the flight plan"
 
-**Before compiling:** Read `../../references/protocol-principles.md` fully.
-
 Convert the research into a protocol Markdown file that strictly follows [protocol-format.md](../../references/protocol-format.md). Reference `{project-root}/protocols/beef-stew.md` as the structural gold standard — it shows exactly how front matter and body sections should be organized.
 
 ### 9. Negotiate Structure
@@ -231,44 +229,66 @@ Run through this checklist before presenting the protocol. Every item must pass:
 - [ ] **Scaling block**: Front matter has `scaling:` with `base_serves`, `base_protein_g`, `principle`
 - [ ] **Format compliance**: Structure matches [protocol-format.md](../../references/protocol-format.md) and beef-stew.md gold standard
 
-### 14. Adversarial Review
-**Re-read `../../references/protocol-principles.md`** before this review.
+### 14. Write Draft Files to Disk
+Write both artifacts to their target paths before review:
 
-After the validation checklist passes, re-read the protocol and science file as a skeptic — someone who will actually cook this dish and needs every detail nailed down. The validation checklist (step 13) confirms structural completeness; this step audits substantive quality.
+1. **`{project-root}/protocols/{dish-slug}-science.md`** — the science file
+2. **`{project-root}/protocols/{dish-slug}.md`** — the protocol Markdown
 
-**Review dimensions:**
+Add `status: draft` to the protocol's front matter. This signals that the protocol has not yet been reviewed and approved.
 
-1. **Safety validation depth** — Is every food-safety claim actually validated for the protocol's parameters? A pasteurization temp is not enough: check that stated times are valid for the stated thickness/weight range. If the protocol allows a range (e.g., "breasts up to 30mm"), the safety hold must cover the worst case. Flag any safety claim that is asserted but not demonstrated.
+**Why write now, before review?** Two reasons:
+- Review agents (step 15) read the files from disk — they need something to read
+- Protocol content survives context compression in the main conversation — it's on disk, not just in-context
 
-2. **Quantity precision** — Scan every ingredient quantity for ambiguity that would force the cook to guess. Salt, leaveners, and thickeners in volumetric measures (tsp/tbsp) without weight equivalents are the most common offenders. Dressing ratios specified as "to taste" without a starting ratio are another. If the quantity is precision-sensitive, it needs a weight or a tight range.
+If review finds issues, fix the files on disk before presenting to the cook (step 16). The `status: draft` field gets removed at step 18 when the cook approves.
 
-3. **Batch and scaling mechanics** — For protocols serving >2, check that high-heat steps (sear, saute) specify batch sizes, hold strategy between batches, and whether timing changes. A sear step that says "sear the chicken" for a 4-serving protocol without mentioning batches will fail at the stove.
+### 15. Parallel Review Agents
+Spawn two review agents in parallel via the Task tool (both in a single response so they execute concurrently). Both are non-interactive — they read files, think, and return findings.
 
-4. **Storage and reheating** — The `## Storage & Reheating` section must have real content, not just a placeholder heading. At minimum: how long it keeps, how to store, and how to reheat without ruining the texture. If the dish genuinely doesn't store well, say so explicitly rather than leaving the section empty.
+**Agent A — Audit** (mechanical compliance check):
+- `subagent_type: general-purpose`, `model: haiku`
+- **Files to read:**
+  - `{project-root}/protocols/{dish-slug}.md` (the protocol)
+  - `{project-root}/protocols/{dish-slug}-science.md` (the science file)
+  - `{installed_path}/../../references/protocol-principles.md`
+  - `{installed_path}/../../references/food-safety.md`
+  - `{installed_path}/../../references/protocol-format.md`
+- **Prompt:** "Read all five files listed below. Check the protocol against every principle in protocol-principles.md, every food safety requirement in food-safety.md, and the format spec in protocol-format.md. Report pass/fail per item with specific citations (quote the offending text). Do not fix anything — report only. Output a labeled list of findings, each tagged PASS/FAIL/WARNING with the rule it checked and evidence."
 
-5. **Contingency coverage** — Every phase should have at least one "if X goes wrong, do Y" note for its most likely failure mode. A sear phase needs a smoke/burning recovery note. A braise phase needs a "liquid too low" note. A pasteurization phase needs an "undertemp" note. These don't need to be exhaustive — one high-probability contingency per phase.
+**Agent B — Adversarial** (unconstrained skeptical review):
+- `subagent_type: general-purpose`, `model: sonnet`
+- **Files to read:**
+  - `{project-root}/protocols/{dish-slug}.md` (the protocol — and nothing else upfront)
+- **Prompt:** "Read the protocol at the path below as a skeptic who will actually cook this dish for the first time. Find anything that would cause you to stop mid-cook and search for information. You may read any other file in the workspace or use web search to verify claims. Output a numbered list of issues, each with: what is wrong, where in the protocol, and a suggested fix or question."
 
-6. **Science-protocol consistency** — Spot-check that temperature targets, timing ranges, and technique rationale in the protocol body match what the science file says. Drift happens during compilation — a science file might say "85-90°C liquid" while the protocol step says "90°C." If they conflict, reconcile before presenting.
+Construct both prompts with the actual resolved file paths (not template variables). Spawn both via Task tool in a single response.
 
-7. **First-cook completeness** — Read the protocol as if the cook has never made this dish. Is there any step where they'd need to stop and search for information not in the protocol? Common gaps: how to know when oil is hot enough for a sear, what "fond is mahogany" looks like if you've never seen fond, how much liquid reduction is "reduced by half." Sensory cues must be concrete enough for a first attempt.
+### 16. Process Review Findings
+Collect results from both agents and apply resolution rules:
 
-**Resolution rules:**
-- **Clear-cut gaps** (missing weight equivalents, empty Storage section, absent contingency): fix them in place without prompting the cook.
-- **Design decisions** (batch size strategy, storage scope, alternative technique): flag for the cook in the review output.
-- **Science conflicts**: always flag — never silently resolve a disagreement between the science file and the protocol.
+- **Audit failures on clear-cut gaps** (missing equipment, no timer, safety violation): fix in the draft files on disk without prompting the cook.
+- **Adversarial findings that are design decisions** (batch size strategy, storage scope, alternative technique): flag for the cook in the review output.
+- **Science conflicts from either agent**: always flag for the cook — never silently resolve a disagreement between the science file and the protocol.
+- **Clean audit + clean adversarial**: note briefly and proceed.
 
-**Output:** Present findings as a labeled block:
+**Output:** Present combined findings as a labeled block:
 
-> **Adversarial Review**
-> - {list of issues found and how each was resolved or flagged}
+> **Review Findings**
+>
+> **Audit:** {summary — N passes, N failures, N warnings}
+> {list of failures/warnings and how each was resolved or flagged}
+>
+> **Adversarial:** {summary}
+> {list of issues and how each was resolved or flagged}
 
-If the review is clean, note it briefly:
+If both reviews are clean:
 
-> **Adversarial Review:** No issues found.
+> **Review Findings:** Audit passed all checks. Adversarial review found no issues.
 
 Do not skip this step. Do not run it silently without reporting. The cook should always see what the review caught.
 
-### 15. Present Protocol for Review
+### 17. Present Protocol for Review
 Show the cook a summary before writing the file:
 
 - Phase count and names
@@ -283,23 +303,17 @@ Ask: "Ready to save? Or want to adjust anything?"
 
 ## Phase 4: Finalize — "Save and hand off"
 
-### 16. Write Files
-Write both artifacts to `{project-root}/protocols/`:
+### 18. Finalize Files
+The draft files were written at step 14 and may have been updated during review (step 16). Finalize them:
 
-1. **`{project-root}/protocols/{dish-slug}-science.md`** — the science file
-2. **`{project-root}/protocols/{dish-slug}.md`** — the protocol Markdown
+- Remove `status: draft` from the protocol front matter (or set to `status: final`)
+- Verify the protocol's `source` field references the science file:
+  `source: "Research compiled in protocols/{dish-slug}-science.md"`
+- Verify the protocol's `science` field points to the science file:
+  `science: "{dish-slug}-science.md"`
+- Write the final versions to disk
 
-The protocol's `source` field should reference the science file:
-```yaml
-source: "Research compiled in protocols/{dish-slug}-science.md"
-```
-
-The protocol's `science` field must point to the science file:
-```yaml
-science: "{dish-slug}-science.md"
-```
-
-### 17. Confirm and Hand Off
+### 19. Confirm and Hand Off
 After saving:
 - Confirm both files were written successfully
 - Display a final summary: phases, total time, equipment, serves
