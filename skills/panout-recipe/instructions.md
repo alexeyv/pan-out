@@ -139,6 +139,8 @@ Wait for feedback. Revise if needed. Do not proceed to protocol compilation unti
 
 ## Phase 3: Protocol Compilation — "Build the flight plan"
 
+**Before compiling:** Read `../../references/protocol-principles.md` fully.
+
 Convert the research into a protocol Markdown file that strictly follows [protocol-format.md](../../references/protocol-format.md). Reference `{project-root}/protocols/beef-stew.md` as the structural gold standard — it shows exactly how front matter and body sections should be organized.
 
 ### 9. Negotiate Structure
@@ -230,6 +232,8 @@ Run through this checklist before presenting the protocol. Every item must pass:
 - [ ] **Format compliance**: Structure matches [protocol-format.md](../../references/protocol-format.md) and beef-stew.md gold standard
 
 ### 14. Adversarial Review
+**Re-read `../../references/protocol-principles.md`** before this review.
+
 After the validation checklist passes, re-read the protocol and science file as a skeptic — someone who will actually cook this dish and needs every detail nailed down. The validation checklist (step 13) confirms structural completeness; this step audits substantive quality.
 
 **Review dimensions:**
