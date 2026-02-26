@@ -27,7 +27,11 @@ case "$PLATFORM" in
         command -v wsay &>/dev/null && wsay "$MESSAGE"
         ;;
     linux)
-        # No reliable TTS on headless Linux — silent no-op
+        if command -v espeak >/dev/null 2>&1; then
+            espeak -s 150 -v en-us "$MESSAGE"
+        else
+            echo "TTS unavailable (install espeak): $MESSAGE" >&2
+        fi
         ;;
 esac
 
