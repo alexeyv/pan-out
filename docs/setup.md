@@ -8,67 +8,39 @@ nav_order: 3
 
 The system needs to know what's in your kitchen. Not everything — just enough to give you advice that actually works with what you have.
 
-## Create your cook profile
+## The guided way
 
-From your cooking workspace, copy the example profile from the Pan Out install location:
+From your cooking workspace, run:
 
 ```
-cp /path/to/pan-out/references/cook-profile.example.md cook-profile.md
+/panout-help
 ```
 
-Open `cook-profile.md` in any editor. Here's what matters and why:
+If you don't have a cook profile yet, the skill detects that and walks you through setup conversationally — it asks about your kitchen, your equipment, how you like to cook, and writes the profile for you. If you mention a thermometer, it'll offer to calibrate it too (ice water, boiling water, a few minutes).
 
-### Equipment
+You don't need to prepare anything or know what it's going to ask. Just answer naturally and it fills in the rest.
 
-List your cookware, heat sources, and prep tools. The system uses this to:
-- **Tailor instructions** — "heat your dutch oven" instead of "heat a large heavy-bottomed pot (ideally enameled cast iron)"
-- **Flag conflicts** — if a protocol needs a 5L dutch oven and you have a 3L, it'll tell you before you start
-- **Adjust technique** — cast iron holds heat differently than stainless; induction behaves differently than gas
+## What it's learning about you
 
-You don't need to catalog every spatula. Focus on:
-- Oven and stovetop type (gas, electric, induction)
-- Dutch ovens and large pots — size and material
-- Temperature instruments (see below)
-- Anything you *don't* have that recipes commonly assume (e.g., no stand mixer, no kitchen scale)
+Here's what the profile captures and why:
 
-### Temperature instruments
+- **Equipment** — your stovetop type, cookware, thermometers. The skills use this to tailor instructions ("heat your dutch oven" instead of a generic description), flag size mismatches before you start, and adjust technique for your specific materials.
+- **Temperature instruments** — a probe thermometer is the single most useful tool for guided cooking. Protocols are built around internal and surface temperatures. An infrared gun is a nice bonus for high-heat searing. Without either, the skills fall back to time-only heuristics.
+- **Preferences** — weeknight speed vs. all-day projects, how much science you want in your guidance, seasoning habits, dietary considerations.
+- **Household** — typical serving count (recipes scale to match) and any household-wide dietary restrictions.
+- **Environment** — altitude shifts boiling points and every time-temperature relationship that depends on them. Water hardness affects seasoning and some reactions.
 
-Good temperature data makes the biggest difference in cooking outcomes. Two instruments cover almost everything:
+## It's all plain text
 
-- **An instant-read probe thermometer** — the kind with a metal spike you stick into food or dip into liquid. Tells you if your braise is holding at the right temperature, or if that chicken is done in the center. This is practically a must. Without one, you're guessing on doneness and food safety.
-- **An infrared (IR) thermometer** — a point-and-shoot gun that reads surface temperature without touching anything. You aim it at your pan to know when it's hot enough to sear. Really nice to have for any high-heat work, but you can get by without one.
-
-If you set up [calibration](#sensor-calibration-optional) below, the system tells you what your specific instrument should read for each target temperature.
-
-### Preferences
-
-How do you like to cook?
-
-- **Approach** — are you optimizing for weeknight speed, or will you spend all Saturday on a braise?
-- **Science level** — do you want the full chemistry explanation, or just tell you what to do?
-- **Seasoning habits** — salt early? Salt late? Heavy hand or conservative?
-- **Dietary considerations** — restrictions, preferences, things you avoid
-
-### Household
-
-- Typical serving count (the system scales recipes to match)
-- Dietary restrictions that apply to the whole household
-
-### Environment
-
-- **Altitude** — this matters more than you'd think. Water boils at 97C at 1000m elevation, which shifts every time-temperature relationship in the book.
-- **Water hardness** — affects seasoning and some chemical reactions
-
-## Sensor calibration (optional)
-
-If you have a probe thermometer and want to know how accurate it is, the system can calibrate it and then tell you what *your* instrument should read for each target: *"We want 90C actual — that's about 86-87C on your probe."*
-
-This is entirely optional. If you trust your thermometer, skip it — the system works fine either way. If you're curious, run `/panout-help` and it'll walk you through it. Takes a few minutes with ice water and boiling water.
+The profile lives in `cook-profile.md` at your workspace root. Calibration data, if you set it up, lives in `calibration.md`. Both are readable Markdown files — open them in any editor to review, tweak, or rewrite anything the guided setup produced. The skills just read whatever's in the file.
 
 ## What if I skip this?
 
 Pan Out works without a profile or calibration. The skills will ask more questions during cooks (because they can't assume anything about your equipment), and temperature guidance will use true targets only (no instrument-specific readings). Setting up a profile just makes everything smoother.
 
-## Next step
+---
 
-[Create your first protocol →](first-recipe.html)
+{: .blue }
+> ## Next step
+>
+> [Create your first protocol →](first-recipe.html)
