@@ -68,6 +68,8 @@ The cook skill has two modes, and it switches between them automatically based o
 > - **Science on demand** — ask "why" at any point and the skill pulls from the protocol's companion science file (`{dish}-science.md`) to explain the physics behind the step. Why collagen converts at 80-90C, why a lazy simmer beats a rolling boil.
 > - **Sensor polls** at regular intervals — *"What's the thermocouple reading?"*
 >
+> During long holds, you'll hear periodic spoken check-ins — a brief progress update so you know it hasn't forgotten about you and the braise hasn't run away.
+>
 > When the timer fires, it calls you back:
 >
 > > *Voice: "Timer's up. Lid-lift check — grab your thermometer."*
@@ -84,7 +86,9 @@ You're cooking, not typing an essay. The skill understands natural confirmations
 - **"I messed up"** or **"it's burning"** — triggers error recovery
 - **"what's next?"** — preview what's coming
 
-If something goes wrong, the skill stays calm. It assesses impact (*"That's maybe a 3 out of 10 on the final dish"*), gives you a forward path, and logs the deviation so the debrief skill can learn from it.
+If something goes wrong, the skill stays calm. It quantifies the consequence — *"That's maybe a 3 out of 10 on the final dish"* — so you know whether to worry or shrug, then gives you a forward path and logs the deviation so the debrief skill can learn from it.
+
+You can also snap photos during the cook — paste an image or use a phone shortcut — and the skill saves them with the session. Useful for capturing what your fond actually looked like or how the braise reduced, and the debrief can reference them later.
 
 ## Temperatures
 

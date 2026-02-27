@@ -48,7 +48,7 @@ This is where the skill does its homework. It runs multiple web searches targeti
 - **Food safety** — FDA/USDA guidelines for the relevant proteins
 - **Your equipment** — how your specific gear affects the technique
 
-It compiles everything into a research document and shows it to you. This is the "why" behind the dish — the science that makes the protocol make sense. This research persists as a dedicated science file alongside the protocol, so the reasoning is always available — during cooks, debriefs, and future revisions.
+It compiles everything into a research document and shows it to you. For proteins, it cross-validates target temperatures against USDA and FDA safe-cooking guidelines so the protocol doesn't undershoot a safety threshold. This is the "why" behind the dish — the science that makes the protocol make sense. This research persists as a dedicated science file alongside the protocol, so the reasoning is always available — during cooks, debriefs, and future revisions.
 
 You review it, ask questions, push back. The skill won't move on until you're satisfied with the research.
 
@@ -73,6 +73,8 @@ Every protocol includes:
 - **Steps** with sensory cues, science notes, and equipment-specific guidance
 - **Temperature targets** as true/actual values (calibration is applied at cook time)
 - **Timers** for every passive phase
+
+Before finalizing, the skill runs two automated reviewers over the draft protocol — one checks format compliance, the other plays adversarial skeptic and flags anything that would confuse or trip up a first-time cook. You don't interact with them; they just tighten things up before the protocol is saved.
 
 ## Phase 4: Finalize — "Save and hand off"
 

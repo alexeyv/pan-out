@@ -106,6 +106,14 @@ If you have thermometers, the system reads your calibration data and tells you e
 
 Each cook makes the protocol better. The debrief captures timing adjustments, technique discoveries, and seasoning preferences so next time starts where this time left off.
 
+### Memory across cooks
+
+Lessons, equipment quirks, and calibration observations accumulate in a memory directory that every future cook reads automatically — so what you learn on one dish carries over to the next.
+
+### Photo capture
+
+Snap a photo mid-cook (paste or phone shortcut) and it's saved with the session. The debrief can reference what your fond or reduction actually looked like.
+
 ## Philosophy
 
 - **Voice is the headline, screen is the article** -- short spoken summaries you can hear over kitchen noise, full detail on screen when you look

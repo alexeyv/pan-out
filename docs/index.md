@@ -20,12 +20,12 @@ That's what Pan Out does. It's a free, open-source set of AI skills for [Claude 
 {: .blue }
 > ## 🔪 Cook it
 >
-> **[Cook with your protocol.](first-cook.html)** Before anything hits the pan, it asks what you're working with — a kilo of chuck, half a bag of onions, feeding two or feeding ten. It adjusts the entire plan to match. Then at the stove, Pan Out becomes your sous-chef — it stays one step ahead of you, tells you what to do next, watches the timers, checks your temperatures, and tells you what to look for instead of just how long to wait. When you're braising for two hours, it tells you to walk away and calls you back when something needs attention.
+> **[Cook with your protocol.](first-cook.html)** Before anything hits the pan, it asks what you're working with — a kilo of chuck, half a bag of onions, feeding two or feeding ten. It adjusts the entire plan to match. Then at the stove, Pan Out becomes your sous-chef — it stays one step ahead of you, tells you what to do next, watches the timers, checks your temperatures, and tells you what to look for instead of just how long to wait. When you're braising for two hours, it tells you to walk away, gives you spoken progress updates so you know it's still on it, and calls you back when something needs attention. You can snap photos mid-cook too — they're saved with the session for the debrief.
 
 {: .purple }
 > ## 📈 Learn from it
 >
-> **[Debrief and improve.](after-you-cook.html)** After you eat, a quick debrief captures what worked and what didn't. Timing adjustments, technique discoveries, seasoning preferences — all written back into the protocol so next time starts where this time left off.
+> **[Debrief and improve.](after-you-cook.html)** After you eat, a quick debrief captures what worked and what didn't. Timing adjustments, technique discoveries, seasoning preferences — all written back into the protocol so next time starts where this time left off. Lessons also accumulate in a memory system that spans dishes, so what you learn making a stew carries over when you braise short ribs.
 
 The system is built around **protocols** — structured recipe files that hold everything needed to cook a dish. They're not static recipes. They're living documents that get better every time you cook.
 

@@ -32,7 +32,7 @@ After the interview, the debrief skill drafts proposed changes, grouped by desti
 
 ### Memory
 
-Technique learnings, timing discoveries, flavor notes — things that apply to future cooks.
+Technique learnings, timing discoveries, flavor notes — things that apply to future cooks. These accumulate in a memory directory across sessions — lessons, equipment quirks, calibration observations — and future cooks read them automatically, so the skill remembers what you've learned even across different dishes.
 
 > *Add to `memory/lessons.md` under "Beef Stew":*
 > - *"900g chuck needs 100min braise for fork-tender, not the 90min in protocol. Test at 85min."*
