@@ -11,10 +11,10 @@
       "source": {
         "source": "github",
         "repo": "alexeyv/pan-out",
-        "ref": "v0.1.0"
+        "ref": "v0.1.1"
       },
       "description": "AI-guided cooking — research dishes, execute protocols in real time, and learn from every cook",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "Alex Verkhovsky",
         "email": "alexey.verkhovsky@gmail.com"
