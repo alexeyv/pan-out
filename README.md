@@ -87,7 +87,7 @@ pan-out/
 
 ## Protocols
 
-Protocols are structured recipe files that hold the full plan for cooking a dish. The recipe skill creates them from research; you don't write them by hand. See [references/protocol-format.md](references/protocol-format.md) for the format specification.
+Protocols are structured recipe files that hold the full plan for cooking a dish. The recipe skill creates them from research; you don't write them by hand.
 
 ## How It Works
 

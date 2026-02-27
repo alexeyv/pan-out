@@ -87,7 +87,7 @@ Then it hands off:
 
 ## What the protocol looks like
 
-You don't need to read the protocol file directly — the cook skill handles it. But if you're curious, each protocol contains structured phases with steps, sensory cues, timing, and the science behind each action. For the full format specification, see [Protocol Reference](reference/protocols.html).
+You don't need to read the protocol file directly — the cook skill handles it. But if you're curious, each protocol contains structured phases with steps, sensory cues, timing, and the science behind each action.
 
 ## Next step
 

@@ -71,8 +71,3 @@ The skill shows you every proposed change and asks you to approve, reject, or mo
 >
 > Over multiple cooks, a protocol goes from "researched best practices" to "tuned to this kitchen and this cook." That's not something a blog recipe can do.
 
----
-
-## Reference
-
-Want to go deeper? See the [reference docs](reference/skills.html) for detailed information on each skill, the protocol format, and how to contribute.
