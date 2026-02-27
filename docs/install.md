@@ -6,7 +6,7 @@ nav_order: 2
 
 # Install Pan Out
 
-You need [Claude Code](https://claude.ai/claude-code) v1.0.33 or later, and about two minutes.
+Pan Out is free and [open source](license.html). You need [Claude Code](https://claude.ai/claude-code) v1.0.33 or later, and about two minutes.
 
 ## From the plugin marketplace (recommended)
 

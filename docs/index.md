@@ -10,7 +10,7 @@ nav_order: 1
 
 You want to make a proper bolognese — the kind that actually tastes like it came from a kitchen that knows what it's doing. You know the basics, but you don't want to wing it from a blog recipe and hope for the best. You want to understand *why* the sear matters, be told (in words, not beeps!) when it's time to flip, swap out an ingredient without ruining the dish, and come out the other side knowing more than when you started.
 
-That's what Pan Out does. It's a set of AI skills for [Claude Code](https://claude.ai/claude-code) that handle the full arc of cooking a dish:
+That's what Pan Out does. It's a free, open-source set of AI skills for [Claude Code](https://claude.ai/claude-code) that handle the full arc of cooking a dish:
 
 {: .yellow }
 > ## 🔬 Research it

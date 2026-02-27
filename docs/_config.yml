@@ -1,5 +1,6 @@
 title: "🍳 Pan Out"
 description: AI-powered cooking skills for Claude Code
+theme: just-the-docs
 remote_theme: just-the-docs/just-the-docs
 
 url: https://panout.org
@@ -17,6 +18,9 @@ nav_external_links:
 back_to_top: true
 back_to_top_text: "Back to top"
 
+
+gh_edit_link: false
+
 callouts:
   purple:
     title: ""
@@ -28,12 +32,6 @@ callouts:
     title: ""
     color: blue
 
-gh_edit_link: true
-gh_edit_link_text: "Edit this page on GitHub"
-gh_edit_repository: "https://github.com/alexeyv/pan-out"
-gh_edit_branch: "master"
-gh_edit_source: docs
-gh_edit_view_mode: "edit"
 
 plugins:
   - jekyll-sitemap
