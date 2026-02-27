@@ -473,7 +473,9 @@ Use when NOT in a team context but `bin/progress-timer.sh` is available.
 bin/progress-timer.sh <total_seconds> "<label>"
 ```
 
-Run in background. Timer logs to `/tmp/braise_timer.log`. Check `tail -1 /tmp/braise_timer.log` to report elapsed time. Timer speaks TTS updates every minute and plays completion alarm.
+Run using the Bash tool with `run_in_background: true`. Do **NOT** also use shell backgrounding (`&` at the end of the command) — combining both causes the Bash tool to report instant false completion (because `&` makes the shell return immediately) while the timer keeps running silently, leading the sous-chef to falsely announce "Timer's up."
+
+Timer logs to `/tmp/braise_timer.log`. Check `tail -1 /tmp/braise_timer.log` to report elapsed time. Timer speaks TTS updates every minute and plays completion alarm.
 
 **Limitation:** Cook must stay near the screen. You cannot proactively message them, deliver mid-hold progress pings, or re-brief at T-15. (The full pre-flight briefing is already delivered at phase entry in Step 4.)
 
