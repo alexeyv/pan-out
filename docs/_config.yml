@@ -10,7 +10,9 @@ color_scheme: light
 search_enabled: true
 search.heading_level: 3
 
-nav_external_links: []
+nav_external_links:
+  - title: GitHub
+    url: https://github.com/alexeyv/pan-out
 
 back_to_top: true
 back_to_top_text: "Back to top"
@@ -26,7 +28,7 @@ callouts:
     title: ""
     color: blue
 
-gh_edit_link: false
+gh_edit_link: true
 gh_edit_link_text: "Edit this page on GitHub"
 gh_edit_repository: "https://github.com/alexeyv/pan-out"
 gh_edit_branch: "master"

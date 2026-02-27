@@ -2,6 +2,8 @@
 
 You want to make a proper bolognese — the kind that actually tastes like it came from a kitchen that knows what it's doing. You don't want to memorize technique details or wing it from a blog recipe. You want to understand the science, hear what to do next without looking at a screen, swap ingredients for what's actually in your fridge, and learn from each cook.
 
+📖 **[Documentation](https://panout.org)** — setup guide, walkthroughs, and reference
+
 Pan Out makes that practical. It's a set of AI skills for [Claude Code](https://claude.ai/claude-code) that handle the full cooking pipeline:
 
 1. **Research** -- deep-dive into a dish's science, techniques, and safety, then build a step-by-step protocol
