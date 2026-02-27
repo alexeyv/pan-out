@@ -30,6 +30,7 @@
 }
 
 // Callouts — hide the empty label pseudo-element
+.green::before,
 .purple::before,
 .yellow::before,
 .blue::before {

@@ -21,6 +21,9 @@ back_to_top_text: "Back to top"
 gh_edit_link: false
 
 callouts:
+  green:
+    title: ""
+    color: green
   purple:
     title: ""
     color: purple

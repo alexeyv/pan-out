@@ -12,6 +12,11 @@ You want to make a proper bolognese — the kind that actually tastes like it ca
 
 That's what Pan Out does. It's a free, open-source set of AI skills for [Claude Code](https://claude.ai/claude-code) that handle the full arc of cooking a dish:
 
+{: .green }
+> ## 👋 Set up your kitchen
+>
+> **Say `/help` to get started.** Pan Out learns about your kitchen — what you cook on, the tools you reach for, whether you have a probe thermometer — and builds a cook profile that every skill uses to tailor its guidance. It also offers optional sensor calibration so temperature calls stay accurate. After that, `/help` is your compass: describe what you want to do and it routes you to the right skill.
+
 {: .yellow }
 > ## 🔬 Research it
 >
