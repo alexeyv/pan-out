@@ -87,11 +87,7 @@ pan-out/
 
 ## Protocols
 
-Protocols are structured recipe files that hold the full plan for cooking a dish. See [references/protocol-format.md](references/protocol-format.md) for the format.
-
-Example protocols included:
-- **beef-stew** -- slow braise with a hard sear up front (~3h)
-- **bolognese** -- classic ragu, oven-braised (~4.5h)
+Protocols are structured recipe files that hold the full plan for cooking a dish. The recipe skill creates them from research; you don't write them by hand. See [references/protocol-format.md](references/protocol-format.md) for the format specification.
 
 ## How It Works
 
