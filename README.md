@@ -72,7 +72,7 @@ pan-out/
 │   ├── recipe/             #   Research and protocol creation
 │   ├── debrief/            #   Post-cook review and learning
 │   └── help/               #   Orientation and skill routing
-├── protocols/              # YAML cooking protocols
+├── protocols/              # Cooking protocols
 ├── references/             # Shared knowledge base
 │   ├── protocol-format.md  #   Protocol format specification
 │   ├── food-safety.md      #   Safe cooking temperatures
@@ -90,8 +90,8 @@ pan-out/
 Protocols are structured recipe files that hold the full plan for cooking a dish. See [references/protocol-format.md](references/protocol-format.md) for the format.
 
 Example protocols included:
-- **beef-stew.yaml** -- slow braise with a hard sear up front (~3h)
-- **bolognese.yaml** -- classic ragu, oven-braised (~4.5h)
+- **beef-stew** -- slow braise with a hard sear up front (~3h)
+- **bolognese** -- classic ragu, oven-braised (~4.5h)
 
 ## How It Works
 

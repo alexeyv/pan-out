@@ -41,7 +41,7 @@ Technique learnings, timing discoveries, flavor notes — things that apply to f
 
 Changes to the protocol backed by actual cook data.
 
-> *In `protocols/beef-stew.yaml`:*
+> *In the beef stew protocol:*
 > - *Change braise duration: 90m to 100m*
 > - *Add to braise briefing: "At 900g, expect closer to 100 minutes."*
 

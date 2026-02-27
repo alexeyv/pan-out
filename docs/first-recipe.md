@@ -65,7 +65,7 @@ Now the skill proposes a phase structure:
 >
 > *Total time: about 3 hours. Does that match how you'd approach this?"*
 
-This is a negotiation, not a dictation. You can merge phases, split them, change the order, adjust technique. The skill compiles your agreed structure into protocol YAML — the executable format that the cook skill consumes.
+This is a negotiation, not a dictation. You can merge phases, split them, change the order, adjust technique. The skill compiles your agreed structure into an executable protocol — the format that the cook skill consumes.
 
 Every protocol includes:
 - **Ingredients** with quantities, functional roles, scaling principles, and substitution notes
@@ -78,8 +78,8 @@ Every protocol includes:
 
 The skill writes two files:
 
-- `protocols/beef-stew.yaml` — the executable protocol
-- `protocols/beef-stew-research.md` — the science deep-dive
+- The executable protocol in `protocols/`
+- A companion science deep-dive alongside it
 
 Then it hands off:
 
@@ -87,26 +87,7 @@ Then it hands off:
 
 ## What the protocol looks like
 
-You don't need to read the YAML — the cook skill handles it. But if you're curious, here's a taste:
-
-{: .yellow }
-> ```yaml
-> phases:
->   - id: sear
->     name: "Maillard Phase"
->     type: active
->     duration: "15-20m"
->     briefing: |
->       High heat, small batches, don't crowd the pan.
->       We want mahogany browning on at least two faces per cube.
->     steps:
->       - instruction: "Sear beef in 2-3 batches, 90-120s per face"
->         batch_size: "10-12 cubes max"
->         sensory_cue: "Mahogany brown crust, releases from pan without sticking"
->         science: "Maillard reaction requires >140C and dry surface."
-> ```
-
-For the full format specification, see [Protocol Reference](reference/protocols.html).
+You don't need to read the protocol file directly — the cook skill handles it. But if you're curious, each protocol contains structured phases with steps, sensory cues, timing, and the science behind each action. For the full format specification, see [Protocol Reference](reference/protocols.html).
 
 ## Next step
 
