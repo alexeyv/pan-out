@@ -73,6 +73,8 @@ pan-out/
 │   ├── debrief/            #   Post-cook review and learning
 │   └── help/               #   Orientation and skill routing
 ├── protocols/              # Cooking protocols
+│   ├── {dish}.md           #   Executable protocol
+│   └── {dish}-science.md   #   Companion science deep-dive
 ├── references/             # Shared knowledge base
 │   ├── protocol-format.md  #   Protocol format specification
 │   ├── food-safety.md      #   Safe cooking temperatures
@@ -87,7 +89,7 @@ pan-out/
 
 ## Protocols
 
-Protocols are structured recipe files that hold the full plan for cooking a dish. The recipe skill creates them from research; you don't write them by hand.
+Protocols are structured recipe files that hold the full plan for cooking a dish. The recipe skill creates them from research; you don't write them by hand. Every protocol has a companion science file (`{dish}-science.md`) that captures the chemistry, temperature rationale, failure modes, and food safety references behind the protocol's design.
 
 ## How It Works
 

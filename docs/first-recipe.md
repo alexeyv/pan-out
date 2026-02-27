@@ -48,7 +48,7 @@ This is where the skill does its homework. It runs multiple web searches targeti
 - **Food safety** — FDA/USDA guidelines for the relevant proteins
 - **Your equipment** — how your specific gear affects the technique
 
-It compiles everything into a research document and shows it to you. This is the "why" behind the dish — the science that makes the protocol make sense.
+It compiles everything into a research document and shows it to you. This is the "why" behind the dish — the science that makes the protocol make sense. This research persists as a dedicated science file alongside the protocol, so the reasoning is always available — during cooks, debriefs, and future revisions.
 
 You review it, ask questions, push back. The skill won't move on until you're satisfied with the research.
 
@@ -78,8 +78,8 @@ Every protocol includes:
 
 The skill writes two files:
 
-- The executable protocol in `protocols/`
-- A companion science deep-dive alongside it
+- The executable protocol in `protocols/{dish}.md`
+- A companion science file in `protocols/{dish}-science.md` — the permanent "why" reference for the dish, containing the chemistry, temperature rationale, failure modes, and food safety data that informed every decision in the protocol
 
 Then it hands off:
 

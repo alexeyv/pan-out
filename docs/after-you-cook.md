@@ -45,6 +45,8 @@ Changes to the protocol backed by actual cook data.
 > - *Change braise duration: 90m to 100m*
 > - *Add to braise briefing: "At 900g, expect closer to 100 minutes."*
 
+Before proposing parameter changes — temperatures, times, ratios — the debrief checks the protocol's companion science file. The science file acts as an arbiter: if your cook data contradicts the established science (e.g., a shorter braise time than collagen conversion supports), the debrief surfaces the contradiction to you rather than silently overriding the protocol.
+
 Every protocol update includes a revision history entry — what changed, why, and which cook session motivated it. The protocol carries its own changelog.
 
 ### Cook profile

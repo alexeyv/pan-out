@@ -65,7 +65,7 @@ The cook skill has two modes, and it switches between them automatically based o
 >
 > During the hold, the skill does useful things with the dead time:
 > - **Pre-flight briefing** for the next phase — what to prepare, what to have ready
-> - **Science context** — why collagen converts at 80-90C, why a lazy simmer beats a rolling boil
+> - **Science on demand** — ask "why" at any point and the skill pulls from the protocol's companion science file (`{dish}-science.md`) to explain the physics behind the step. Why collagen converts at 80-90C, why a lazy simmer beats a rolling boil.
 > - **Sensor polls** at regular intervals — *"What's the thermocouple reading?"*
 >
 > When the timer fires, it calls you back:

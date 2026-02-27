@@ -15,7 +15,7 @@ That's what Pan Out does. It's a free, open-source set of AI skills for [Claude 
 {: .yellow }
 > ## 🔬 Research it
 >
-> **[Build a protocol.](first-recipe.html)** You name a dish. Pan Out pulls from recipes, food science, and technique guides, cross-validates temperatures and times, and compiles everything into a step-by-step protocol tuned to your kitchen, your equipment, and your preferences.
+> **[Build a protocol.](first-recipe.html)** You name a dish. Pan Out pulls from recipes, food science, and technique guides, cross-validates temperatures and times, and compiles everything into a step-by-step protocol tuned to your kitchen, your equipment, and your preferences — alongside a companion science reference that captures the "why" behind every decision.
 
 {: .blue }
 > ## 🔪 Cook it
