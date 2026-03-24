@@ -102,13 +102,14 @@ Before any cooking begins, establish the scale and negotiate reality:
 ### 6. Audio Health Check
 Run at session start. Determines audio mode for the rest of the cook.
 
-1. **Test TTS**: Run `bin/speak.sh "Can you hear me?"` and ask cook to confirm
-2. **If cook confirms** → audio mode = `tts`. Proceed normally.
-3. **If TTS errors or cook says no**:
+1. **Test TTS**: Run `bin/speak.sh "This is your sous-chef checking audio. You should hear this clearly over kitchen noise."` and ask cook: "Could you hear that clearly? Was it loud enough over fan, water, or sizzle?"
+2. **If cook says too quiet** → tell them to raise system volume and re-test with the same phrase.
+3. **If cook confirms** → audio mode = `tts`. Proceed normally.
+4. **If TTS errors or cook says no**:
    - Test alert sound: `bin/chime.sh alert`
    - If cook hears the chime → audio mode = `chime`. Use chimes for attention, all instructions screen-only.
    - If no sound at all → audio mode = `silent`. Screen-only. Tell the cook: "No audio available. Stay near the screen — I can't call you back from another room."
-4. **Record audio mode** in the state file frontmatter (`audio_mode: tts|chime|silent`)
+5. **Record audio mode** in the state file frontmatter (`audio_mode: tts|chime|silent`)
 
 #### Mid-Cook TTS Failure
 If `bin/speak.sh` fails during an active session:
@@ -136,7 +137,7 @@ At every phase transition:
 2. **Announce** the phase: name, duration, what we're doing and why
 3. **Checklist**: equipment ready? ingredients prepped? questions?
 4. **Clarification window**: "Any questions before we start? Now's the time."
-5. **Update state file:** record `phase_start_epoch` (current epoch via `date +%s`), set `phase_end_epoch` (add protocol phase duration in seconds; `null` if open-ended), reset `phase_elapsed` to 0, update `current_phase` and `phase_index`. Reset `step_index` to 1 and set `step_count` from the protocol's phase step list.
+5. **Update state file:** record `phase_start` (current time as ISO 8601 via `date +"%Y-%m-%dT%H:%M:%S%z"`), compute `phase_end` (add phase duration seconds to current epoch via `date -r $(($(date +%s) + duration)) +"%Y-%m-%dT%H:%M:%S%z"`; `null` if open-ended), reset `phase_elapsed` to 0, update `current_phase` and `phase_index`. Reset `step_index` to 1 and set `step_count` from the protocol's phase step list.
 
 ### Active Phase Execution
 - Deliver one step at a time. Track your position explicitly: "Step 3 of 5"
@@ -144,6 +145,8 @@ At every phase transition:
 - When the cook confirms a step, increment `step_index` in the state file and deliver the NEXT step. Never re-send a confirmed step.
 - If the cook's response includes BOTH a confirmation AND a question, answer the question first, then deliver the next step
 - Coach sensory recognition: "The fond should be mahogany brown" > "sear for 4 minutes"
+- **Tactile quantities for small amounts**: When presenting quantities under ~10g (salt, spices, herbs), always include a tactile equivalent alongside grams: "2-3g (two generous pinches per side)" not just "2-3g." Grams are meaningless mid-cook without a scale. Reference: 1 pinch fine salt ≈ 0.3-0.5g, 1 generous pinch ≈ 0.5-0.8g.
+- **Always include quantities**: Every step that involves an ingredient must state the quantity — even if the previous step mentioned it. The cook forgets between steps and shouldn't have to scroll back. "Add the dill (~15g)" not "Add the dill."
 - Provide technique explainers on demand — no judgment, full mechanical how-to
 
 ### Passive Phase Execution (Timer-Driven)
@@ -217,9 +220,14 @@ Update the state file automatically on:
 - Any significant decision
 
 **Field update rules:**
-- `phase_elapsed`: recompute at every write. Formula: `round((current_epoch - phase_start_epoch) / 60)`.
-- `phase_start_epoch`: overwrite with `date +%s` at every phase transition.
-- `phase_end_epoch`: set at phase transition by adding phase duration to `phase_start_epoch`. Set to `null` for open-ended phases. Update when cook extends a phase.
+- `phase_elapsed`: recompute at every write. Parse `phase_start` to epoch, then `round((current_epoch - start_epoch) / 60)`.
+- `phase_start`: overwrite with `date +"%Y-%m-%dT%H:%M:%S%z"` at every phase transition.
+- `phase_end`: set at phase transition. Compute end epoch (start epoch + duration seconds), convert to ISO via `date -r $end_epoch +"%Y-%m-%dT%H:%M:%S%z"`. Set to `null` for open-ended phases. Update when cook extends a phase.
+
+**Epoch conversion reference (macOS):**
+- Current epoch: `date +%s`
+- ISO → epoch: `date -j -f "%Y-%m-%dT%H:%M:%S%z" "$ISO_TS" +%s`
+- Epoch → ISO: `date -r $EPOCH +"%Y-%m-%dT%H:%M:%S%z"`
 
 ### Status Banner
 
@@ -245,19 +253,19 @@ Fields:
 - **Dish Name** — bold, title-cased from protocol `name` field
 - **PHASE {N}: *{Phase Label}*** — phase number (1-indexed from protocol), italic phase name
 - **{HH:MM}** — wall-clock time from `date +%H:%M` (run at start of every turn)
-- **{timer}** — computed from the state file's `phase_end_epoch` field:
-  - `remaining = phase_end_epoch - current_epoch` (seconds)
+- **{timer}** — computed from the state file's `phase_end` field:
+  - Parse `phase_end` to epoch, then `remaining = end_epoch - current_epoch` (seconds)
   - Positive, ≥ 5 minutes: `Xmin left` (round to nearest minute)
   - Positive, < 5 minutes: `M:SS left` (e.g., `4:30 left`, `0:45 left`)
   - Zero or negative: `+Xmin over` (absolute value, round up)
-  - `phase_end_epoch` is null: omit timer slot entirely (open-ended phase)
+  - `phase_end` is null: omit timer slot entirely (open-ended phase)
   - If kicker provides remaining time in its message: use it directly
 
 The banner text is **outside** the code block — so `**bold**` and `*italic*` render with visual weight.
 
 #### Example banners
 
-Active phase, open-ended (no `phase_end_epoch`):
+Active phase, open-ended (no `phase_end`):
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -329,21 +337,21 @@ This is the anti-lost-in-the-middle pattern: when the kicker fires an event 90 m
 ```yaml
 ---
 protocol: beef-stew
-started: "Mon Feb 16 10:30 MST"
+started: "2025-02-16T10:30:00-0700"
 current_phase: braise
 phase_index: 2
 step_index: 1                  # current step within phase; resets on phase transition
 step_count: null               # total steps in current phase; null until phase entry
 phase_elapsed: 23              # minutes since current phase started; resets on transition
-phase_start_epoch: 1740000000  # Unix epoch when current phase began
-phase_end_epoch: 1740001380    # Unix epoch of planned phase end; null if open-ended
+phase_start: "2025-02-16T10:30:00-0700"  # ISO 8601 when current phase began
+phase_end: "2025-02-16T10:53:00-0700"    # ISO 8601 planned phase end; null if open-ended
 scaled_to: "900g beef"
 deviations: 1
 timer_mode: progress-timer
 last_sensor:
   tc_display: "89"
   ir_display: null
-  timestamp: "Mon Feb 16 11:37 MST"
+  timestamp: "2025-02-16T11:37:00-0700"
 audio_mode: tts                # set during Audio Health Check (Step 6): tts|chime|silent
 status: active
 ---
@@ -351,7 +359,7 @@ status: active
 
 Body contains per-phase narrative logs with timestamps and deviations.
 
-`phase_remaining` is derived at render time — not stored. Formula: `round((phase_end_epoch - current_epoch) / 60)`. Used only for the banner timer slot.
+`phase_remaining` is derived at render time — not stored. Parse `phase_end` to epoch, then `round((end_epoch - current_epoch) / 60)`. Used only for the banner timer slot.
 
 ## Timer Integration
 
@@ -496,7 +504,7 @@ If neither kicker nor progress-timer is available:
 ### Phase Extension
 
 When the cook says "let's go another N minutes" or similar during any phase:
-- Add `N * 60` seconds to `phase_end_epoch` in the state file.
+- Parse `phase_end` to epoch, add `N * 60` seconds, convert back to ISO, update `phase_end` in the state file.
 - Acknowledge on screen: "Extended by N minutes. Xmin left."
 - If kicker is active: send `shutdown_request` to the kicker, recalculate the schedule, spawn a new kicker with the updated timer-complete epoch.
 

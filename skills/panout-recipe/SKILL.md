@@ -12,7 +12,7 @@ description: Research a dish and compile an executable cooking protocol. Use whe
 > - Resolve `{project-root}` to CWD before reading any project files
 > - Always produce both artifacts: science file AND protocol Markdown
 > - Always scan existing protocols and memory before starting research
-> - Never skip the negotiation phase — the cook decides, you advise
+> - Never skip negotiation (step 9) — the cook decides, you advise
 
 # Recipe Skill — Research & Protocol Compiler
 
@@ -31,6 +31,7 @@ You produce two artifacts per dish:
 - **Two artifacts, always.** Every dish gets both a science file and a protocol Markdown. The science file is the "why"; the protocol is the "how."
 - **Web search is mandatory.** Always search. Multiple sources = cross-validation. Never rely solely on pre-trained knowledge for temperatures, times, or safety data.
 - **Interactive, not autonomous.** The cook reviews research before protocol compilation. Key structural decisions (phase count, sear vs. no sear, seasoning strategy) are negotiated, not dictated.
+- **Clarify, don't guess.** When the cook's intent is ambiguous — dish variant, technique preference, scope — ask. A quick clarifying question beats a wrong assumption that compounds through research and compilation. Keep asking until the target is clear.
 - **Protocol format compliance.** Strict adherence to [protocol-format.md](../../references/protocol-format.md). The cook skill consumes the output without modification.
 - **Actual temperatures only.** Protocols store true target temperatures. Calibration is applied at runtime by the cook skill from [calibration.md](../../references/calibration.md).
 - **No TTS or timers.** This is a planning skill, not an execution skill. Save voice and timers for the cook skill.
@@ -55,7 +56,10 @@ If not already specified, ask: "What are we making?"
 ### 3. Scan Existing Knowledge
 Before doing anything else, check what already exists:
 
-- **Same dish**: Scan `{project-root}/protocols/` for a matching `.md` protocol. If found, offer to refine rather than rebuild: "You already have a {dish} protocol. Want to revise it, or start fresh?"
+- **Unfinished drafts + same dish**: Scan `{project-root}/protocols/` for both `wip-{dish-slug}.md` and `{dish-slug}.md`. Handle the combinations:
+  - **Both exist**: "You have a finalized {dish} protocol and an unfinished draft. Want to revise the finalized version, resume the draft, or start fresh?"
+  - **Only WIP exists**: "There's an unfinished draft for {dish} from a previous session. Want to pick up where we left off, or start fresh?"
+  - **Only finalized exists**: "You already have a {dish} protocol. Want to revise it, or start fresh?"
 - **Related dishes**: Scan `{project-root}/protocols/` for `.md` protocols with the same technique, protein, or structure (e.g., a lamb braise when building a beef braise). Inherit proven patterns: "You have a beef stew protocol that uses the same braise technique. I'll use its timing and temp targets as a starting point."
 - **Past learnings**: Scan `{project-root}/memory/` for notes from previous cooks relevant to this dish or technique.
 - **Cook profile**: Read `{project-root}/cook-profile.md` if it exists for equipment, preferences, and skill level context.
@@ -144,9 +148,9 @@ Wait for feedback. Revise if needed. Do not proceed to protocol compilation unti
 
 ---
 
-## Phase 3: Protocol Compilation — "Build the flight plan"
+## Phase 3: Negotiate & Compile — "Design, then build the flight plan"
 
-Convert the research into a protocol Markdown file that strictly follows [protocol-format.md](../../references/protocol-format.md). Reference `{project-root}/protocols/beef-stew.md` as the structural gold standard — it shows exactly how front matter and body sections should be organized.
+Negotiate key design decisions with the cook, then compile the result into a protocol Markdown file that strictly follows [protocol-format.md](../../references/protocol-format.md). Reference `{project-root}/protocols/beef-stew.md` as the structural gold standard — it shows exactly how front matter and body sections should be organized.
 
 ### 9. Negotiate Structure
 Before writing, propose the phase structure:
@@ -237,18 +241,18 @@ Run through this checklist before presenting the protocol. Every item must pass:
 - [ ] **Format compliance**: Structure matches [protocol-format.md](../../references/protocol-format.md) and beef-stew.md gold standard
 
 ### 14. Write Draft Files to Disk
-Write both artifacts to their target paths before review:
+Write both artifacts with a `wip-` prefix before review:
 
-1. **`{project-root}/protocols/{dish-slug}-science.md`** — the science file
-2. **`{project-root}/protocols/{dish-slug}.md`** — the protocol Markdown
+1. **`{project-root}/protocols/{dish-slug}-science.md`** — the science file (no prefix — science files are reference material, not executable)
+2. **`{project-root}/protocols/wip-{dish-slug}.md`** — the protocol Markdown
 
-Add `status: draft` to the protocol's front matter. This signals that the protocol has not yet been reviewed and approved.
+The `wip-` prefix is a filesystem-level signal that the protocol hasn't been reviewed and approved. Other skills (cook, debrief) won't find it by accident.
 
 **Why write now, before review?** Two reasons:
 - Review agents (step 15) read the files from disk — they need something to read
 - Protocol content survives context compression in the main conversation — it's on disk, not just in-context
 
-If review finds issues, fix the files on disk before presenting to the cook (step 16). The `status: draft` field gets removed at step 18 when the cook approves.
+If review finds issues, fix the files on disk before presenting to the cook (step 16). The `wip-` prefix is removed at step 18 when the cook approves.
 
 ### 15. Parallel Review Agents
 Spawn two review agents in parallel via the Task tool (both in a single response so they execute concurrently). Both are non-interactive — they read files, think, and return findings.
@@ -256,7 +260,7 @@ Spawn two review agents in parallel via the Task tool (both in a single response
 **Agent A — Audit** (mechanical compliance check):
 - `subagent_type: general-purpose`, `model: haiku`
 - **Files to read:**
-  - `{project-root}/protocols/{dish-slug}.md` (the protocol)
+  - `{project-root}/protocols/wip-{dish-slug}.md` (the protocol)
   - `{project-root}/protocols/{dish-slug}-science.md` (the science file)
   - `{installed_path}/../../references/protocol-principles.md`
   - `{installed_path}/../../references/food-safety.md`
@@ -264,9 +268,9 @@ Spawn two review agents in parallel via the Task tool (both in a single response
 - **Prompt:** "Read all five files listed below. Check the protocol against every principle in protocol-principles.md, every food safety requirement in food-safety.md, and the format spec in protocol-format.md. Report pass/fail per item with specific citations (quote the offending text). Do not fix anything — report only. Output a labeled list of findings, each tagged PASS/FAIL/WARNING with the rule it checked and evidence."
 
 **Agent B — Adversarial** (unconstrained skeptical review):
-- `subagent_type: general-purpose`, `model: sonnet`
+- `subagent_type: general-purpose`, `model: opus`
 - **Files to read:**
-  - `{project-root}/protocols/{dish-slug}.md` (the protocol — and nothing else upfront)
+  - `{project-root}/protocols/wip-{dish-slug}.md` (the protocol — and nothing else upfront)
 - **Prompt:** "Read the protocol at the path below as a skeptic who will actually cook this dish for the first time. Find anything that would cause you to stop mid-cook and search for information. You may read any other file in the workspace or use web search to verify claims. Output a numbered list of issues, each with: what is wrong, where in the protocol, and a suggested fix or question."
 
 Construct both prompts with the actual resolved file paths (not template variables). Spawn both via Task tool in a single response.
@@ -313,12 +317,11 @@ Ask: "Ready to save? Or want to adjust anything?"
 ### 18. Finalize Files
 The draft files were written at step 14 and may have been updated during review (step 16). Finalize them:
 
-- Remove `status: draft` from the protocol front matter (or set to `status: final`)
+- Rename `wip-{dish-slug}.md` → `{dish-slug}.md` (remove the `wip-` prefix)
 - Verify the protocol's `source` field references the science file:
   `source: "Research compiled in protocols/{dish-slug}-science.md"`
 - Verify the protocol's `science` field points to the science file:
   `science: "{dish-slug}-science.md"`
-- Write the final versions to disk
 
 ### 19. Confirm and Hand Off
 After saving:
@@ -333,7 +336,7 @@ After saving:
 Dish slugs are lowercase, hyphenated: `beef-stew`, `fried-eggs`, `pan-seared-salmon`.
 
 Output files:
-- `{project-root}/protocols/{dish-slug}.md`
+- `{project-root}/protocols/wip-{dish-slug}.md` → `{project-root}/protocols/{dish-slug}.md` (renamed on finalize)
 - `{project-root}/protocols/{dish-slug}-science.md`
 
 ---
