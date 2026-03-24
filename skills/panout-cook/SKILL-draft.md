@@ -39,7 +39,7 @@ Science file (`{dish-slug}-science.md`): load on demand only — "why" questions
 
 **Entry checklist**: re-read `## Phase:` section → announce (name, duration, why) → "Any questions before we start?" → update state file.
 
-**Active phases (pull)**: one step at a time, "Step 3 of 5", wait for confirmation.
+**Active phases (pull)**: one step at a time, "Step 3 of 5", wait for confirmation. Before presenting each step, set `step_index` to that step's number in the state file.
 
 **Passive phases (push)**: start timer → tell cook they can walk away → deliver full pre-flight for NEXT phase (equipment, ingredients, sequence, sensory cues, what can go wrong — not a headline) → poll sensors during hold → on complete: chime + voice, sensor check, decide next.
 
