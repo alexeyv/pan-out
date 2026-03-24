@@ -10,5 +10,6 @@
   "repository": "https://github.com/alexeyv/pan-out",
   "homepage": "https://github.com/alexeyv/pan-out",
   "license": "MIT",
-  "keywords": ["cooking", "recipes", "sous-chef", "protocols", "food-science"]
+  "keywords": ["cooking", "recipes", "sous-chef", "protocols", "food-science"],
+  "skills": "./skills/"
 }
