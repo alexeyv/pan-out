@@ -6,13 +6,15 @@ You want to make a proper bolognese — the kind that actually tastes like it ca
 
 Pan Out makes that practical. It's a set of AI skills for [Claude Code](https://claude.ai/claude-code) that handle the full cooking pipeline:
 
-1. **Research** -- deep-dive into a dish's science, techniques, and safety, then build a step-by-step protocol
-2. **Cook** -- talk you through each phase at the stove with timers, temperature checks, and ingredient swaps
-3. **Debrief** -- after you eat, capture what worked and what didn't so next time starts better
+1. **[Research](https://panout.org/first-recipe.html)** -- deep-dive into a dish's science, techniques, and safety, then build a step-by-step protocol
+2. **[Cook](https://panout.org/first-cook.html)** -- talk you through each phase at the stove with timers, temperature checks, and ingredient swaps
+3. **[Debrief](https://panout.org/after-you-cook.html)** -- after you eat, capture what worked and what didn't so next time starts better
 
 The system is built around **protocols** -- structured recipe files that hold everything needed to cook a dish: ingredients, phases, timing, temperatures, sensory cues, and the science behind each step.
 
 ## Installation
+
+Full setup walkthrough: **[panout.org/install](https://panout.org/install.html)**
 
 ### As a Plugin (recommended)
 
@@ -30,7 +32,7 @@ cp references/cook-profile.example.md references/cook-profile.md
 cp references/calibration.example.md references/calibration.md
 ```
 
-Edit `references/cook-profile.md` with your equipment, preferences, and kitchen environment. If you have temperature instruments, run a boiling-water calibration and fill in `references/calibration.md`.
+Edit `references/cook-profile.md` with your equipment, preferences, and kitchen environment. If you have temperature instruments, run a boiling-water calibration and fill in `references/calibration.md`. See the [kitchen setup guide](https://panout.org/setup.html) for details.
 
 ### From Source
 
