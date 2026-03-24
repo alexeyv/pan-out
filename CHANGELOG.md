@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-03-24
+
+### Changed
+- Cook skill prompt compressed from 555 to 186 lines (66% reduction) with no behavioral difference
+- Recipe workflow and cook state consistency improvements
+- Inline `instructions.md` into SKILL.md across skills
+
+### Fixed
+- Attention chime (`Glass.aiff`) added to `speak.sh` for kitchen salience on macOS
+- `step_index` now maintained inline during active pull-mode phases for reliable crash recovery
+- Docs site: removed theme gem reference breaking GitHub Pages build
+- Homepage: prefixed `/help` with `panout-`
+
+### Docs
+- Rewritten setup page with guided onboarding flow
+- Help skill section added to homepage
+- Deep links from README to panout.org doc pages
+- Profile update guidance added to setup page
+
 ## [0.1.1] - 2026-02-27
 
 ### Added
