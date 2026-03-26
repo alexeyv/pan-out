@@ -56,7 +56,7 @@ Non-obvious failures from real sessions:
 - **Forward-only**: Never re-send a confirmed step. Check state file if unsure.
 - **Question before advance**: Confirmation + question in one message → answer question first, then next step.
 - **Hands constraint**: Never suggest parallel actions requiring more hands than available.
-- **Phase extension**: "Go another N minutes" → update `phase_end`, acknowledge new remaining time, respawn kicker if active.
+- **Phase extension**: "Go another N minutes" → update `phase_end`, acknowledge new remaining time, send extend command if kicker active.
 
 ---
 
@@ -108,7 +108,7 @@ phase_start: "1970-01-01T00:00:00+0000"
 phase_end: "1970-01-01T00:23:00+0000"    # null if open-ended
 scaled_to: "900g beef"
 deviations: 1
-timer_mode: progress-timer                # kicker | progress-timer | manual
+timer_mode: progress-timer                # kicker (external via protocol) | progress-timer | manual
 last_sensor:
   tc_display: "89"
   ir_display: null
@@ -152,17 +152,24 @@ The `PHASE {N}:` prefix is critical — the task tool groups by status, not logi
 Three modes in preference order:
 
 ### Mode 1: Kicker (preferred)
-Use when `TeamCreate` succeeds (Claude Code team context). A haiku agent runs a bash heartbeat and messages you on schedule.
+Use when `{installed_path}/bin/kicker.py` exists. An external Python process handles timing; you communicate via the kicker protocol (see `kicker-protocol.md` in skill directory for message format details).
 
 At passive phase entry:
-1. Ensure team context exists (create if needed)
+1. Create session directory: `/tmp/kicker-{session}/` (where `{session}` = cook session ID from state file name, e.g. `cook-2026-03-26-beef-stew`)
 2. Compute schedule — absolute epoch timestamps for: progress pings (every 10min, or 5min for ≤30min holds), pre-flight at T-15, ready check at T-5, countdown pings T-4 to T-1, timer complete at T+0. Drop progress pings that collide with higher-priority events. Enforce 60s minimum gap between events.
-3. Create tasks for each event (self-contained descriptions)
-4. Write schedule TSV to `/tmp/kicker-schedule-{session}.tsv`: `{epoch}\t{task_id}\t{message}`
-5. Read `kicker-prompt.md` from skill directory, substitute placeholders, spawn as haiku agent named `kicker`
+3. Write `schedule.json` to session directory (atomic: write to `.tmp`, then `mv`). Each event object needs: `id` (unique string), `type` (progress|preflight|ready-check|countdown|complete), `epoch` (unix timestamp), `message` (short summary), `detail` (optional — self-contained description for context-compressed agent). Wrap in `{"version": 1, "created": <epoch>, "events": [...]}`.
+4. Start kicker: `python3 {installed_path}/bin/kicker.py /tmp/kicker-{session}/` via Bash with `run_in_background: true`
+5. Start poll adapter: `python3 {installed_path}/bin/poll-adapter.py /tmp/kicker-{session}/` via Bash with `run_in_background: true`
 
-On kicker message: TaskGet the event → act on type (progress/pre-flight/ready-check/countdown/complete).
-Teardown: kicker self-exits when schedule empties. To abort early, send `shutdown_request`.
+On poll adapter return, parse stdout as JSONL (one JSON object per line). Process all lines in order:
+- `"type": "fire"` → act on the event's type (progress/preflight/ready-check/countdown/complete) using `message` and `detail` fields.
+- `"type": "done"` → stop polling, remove session directory, proceed to next phase.
+- `"type": "error"` → announce to cook, fall back to Mode 2 for remaining hold time.
+
+After processing the batch: if the last event was `done` or `error`, stop. Otherwise re-invoke poll adapter. If stdout was empty (no new events), re-invoke poll adapter.
+
+Extension: append `{"type": "extend", "seconds": N, "ts": <epoch>}` as a single line to `/tmp/kicker-{session}/control.jsonl`. Update `phase_end` in state file.
+Shutdown: append `{"type": "shutdown", "ts": <epoch>}` to `control.jsonl`. Wait for `done` event (up to 10s), then remove session directory.
 
 One kicker at a time. Shutdown the old one before spawning a new one.
 
