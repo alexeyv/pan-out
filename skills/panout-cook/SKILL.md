@@ -56,7 +56,7 @@ Non-obvious failures from real sessions:
 - **Forward-only**: Never re-send a confirmed step. Check state file if unsure.
 - **Question before advance**: Confirmation + question in one message → answer question first, then next step.
 - **Hands constraint**: Never suggest parallel actions requiring more hands than available.
-- **Phase extension**: "Go another N minutes" → update `phase_end`, acknowledge new remaining time, send extend command if kicker active.
+- **Phase extension**: "Go another N minutes" → update `phase_end`, acknowledge new remaining time, and if a timer is running, TaskStop it and re-arm with the events shifted by N.
 
 ---
 
@@ -108,7 +108,7 @@ phase_start: "1970-01-01T00:00:00+0000"
 phase_end: "1970-01-01T00:23:00+0000"    # null if open-ended
 scaled_to: "900g beef"
 deviations: 1
-timer_mode: progress-timer                # kicker (external via protocol) | progress-timer | manual
+timer_mode: monitor-timer                 # monitor-timer | manual
 last_sensor:
   tc_display: "89"
   ir_display: null
@@ -139,49 +139,68 @@ Use Claude Code tasks as a structured cook plan.
 |-----------|--------|---------|
 | Phase | `PHASE {N} {Name} — {param}` | `PHASE 2 Sous Vide Bath — 63°C, 1h 45m` |
 | Sub-task | `PHASE {N}: ↳ {what}` | `PHASE 2: ↳ Bath temp check (~07:20)` |
-| Kicker event | `KICKER: {type} — {detail}` | `KICKER: Pre-flight briefing for Sear` |
+| Timer event | `TIMER: {type} — {detail}` | `TIMER: Pre-flight briefing for Sear` |
 
 The `PHASE {N}:` prefix is critical — the task tool groups by status, not logical order. Without it, sub-tasks orphan visually.
 
-**Task descriptions must be self-contained.** When the kicker fires an event 90 minutes later, the lead may have lost context to compression. Write each description as if the reader has no session memory.
+**Task descriptions must be self-contained.** When the timer fires an event 90 minutes later, you may have lost context to compression. Write each description as if the reader has no session memory.
 
 ---
 
 ## Timer Integration
 
-Three modes in preference order:
+Two modes. Mode 1 unless it is unavailable.
 
-### Mode 1: Kicker (preferred)
-Use when `{installed_path}/bin/kicker.py` exists. An external Python process handles timing; you communicate via the kicker protocol (see `kicker-protocol.md` in skill directory for message format details).
+### Mode 1: Hold timer under Monitor (preferred)
 
-At passive phase entry:
-1. Create session directory: `/tmp/kicker-{session}/` (where `{session}` = cook session ID from state file name, e.g. `cook-2026-03-26-beef-stew`)
-2. Compute schedule — absolute epoch timestamps for: progress pings (every 10min, or 5min for ≤30min holds), pre-flight at T-15, ready check at T-5, countdown pings T-4 to T-1, timer complete at T+0. Drop progress pings that collide with higher-priority events. Enforce 60s minimum gap between events.
-3. Write `schedule.json` to session directory (atomic: write to `.tmp`, then `mv`). Each event object needs: `id` (unique string), `type` (progress|preflight|ready-check|countdown|complete), `epoch` (unix timestamp), `message` (short summary), `detail` (optional — self-contained description for context-compressed agent). Wrap in `{"version": 1, "created": <epoch>, "events": [...]}`.
-4. Start kicker: `python3 {installed_path}/bin/kicker.py /tmp/kicker-{session}/` via Bash with `run_in_background: true`
-5. Start poll adapter: `python3 {installed_path}/bin/poll-adapter.py /tmp/kicker-{session}/` via Bash with `run_in_background: true`
+Use when `{installed_path}/bin/hold-timer.py` exists. The script counts wall-clock time and owns the audio; every line it prints to stdout wakes you. Full contract: `python3 {installed_path}/bin/hold-timer.py --help`.
 
-On poll adapter return, parse stdout as JSONL (one JSON object per line). Process all lines in order:
-- `"type": "fire"` → act on the event's type (progress/preflight/ready-check/countdown/complete) using `message` and `detail` fields.
-- `"type": "done"` → stop polling, remove session directory, proceed to next phase.
-- `"type": "error"` → announce to cook, fall back to Mode 2 for remaining hold time.
+**At passive phase entry:**
 
-After processing the batch: if the last event was `done` or `error`, stop. Otherwise re-invoke poll adapter. If stdout was empty (no new events), re-invoke poll adapter.
+1. **Build the schedule.** One JSON object. `after` = seconds from arming — you do the clock math, the script only counts forward:
+   ```json
+   {"version": 1, "events": [
+     {"after": 600, "type": "progress", "message": "10 min elapsed — bath holding",
+      "detail": "Phase 2 progress check. 80 min remain. Check the bag seal.",
+      "speak": "Ten minutes down, eighty to go."}
+   ]}
+   ```
+   For a hold of length T: `progress` every 10 min (5 min when T ≤ 30 min), `preflight` at T-15 (T-5 for short holds), `ready-check` at T-5, `countdown` at T-4…T-1, `complete` at T+0 — always last, since the alarm starts on the final event. Drop progress pings that collide with higher-priority events; keep ≥60s between events. `speak` defaults to `message`; set it when the spoken form should differ. Write `detail` self-contained — the you that receives it may have lost context to compression.
 
-Extension: append `{"type": "extend", "seconds": N, "ts": <epoch>}` as a single line to `/tmp/kicker-{session}/control.jsonl`. Update `phase_end` in state file.
-Shutdown: append `{"type": "shutdown", "ts": <epoch>}` to `control.jsonl`. Wait for `done` event (up to 10s), then remove session directory.
+2. **Arm it** with the Monitor tool, `persistent: true`, description naming dish and phase:
+   ```
+   command: python3 {installed_path}/bin/hold-timer.py '{schedule-json}' --label "Bath hold" --audio-mode tts
+   description: "sous-vide-chicken Phase 2 bath — hold timer"
+   ```
+   `--audio-mode` mirrors `audio_mode` from the state file (`tts` | `chime` | `silent`). The heartbeat tick is 60s by default — that soft tick is the cook's proof the timer is alive. `--tick-seconds 0` for a quiet hold (overnight, sleeping household).
 
-One kicker at a time. Shutdown the old one before spawning a new one.
+3. **Record** `timer_mode: monitor-timer` in the state file and note the Monitor task ID in the log body — a context-compressed you still needs to be able to stop it. Then tell the cook they can walk away and deliver the pre-flight for the NEXT phase.
 
-### Mode 2: Progress Timer (fallback)
-```bash
-bin/progress-timer.sh <total_seconds> "<label>"
-```
-Run with Bash tool `run_in_background: true`. Do NOT also use `&` — combining both causes false early completion.
-Check `/tmp/braise_timer.log` for elapsed time.
+**On each wake**, act on `type`:
 
-### Mode 3: Manual (last resort)
-Tell cook to set a phone timer. Record expected end time in state file.
+| type | Do |
+|------|-----|
+| `progress` | poll sensors, brief status, update state file |
+| `preflight` | full pre-flight briefing for the next phase |
+| `ready-check` | confirm the cook is back and ready |
+| `countdown` | short spoken remaining-time call |
+| `complete` | sensor check, silence the alarm, decide next phase |
+| `gap` | the machine slept — recompute remaining time from the wall clock, give the cook the corrected number, then handle the overdue events that follow |
+| `error` | announce it, fall back to Mode 2 for the rest of the hold |
+
+Event lines carry `late_by` (seconds) when they fired late. Announce the corrected time, never the scheduled one.
+
+**Silencing the alarm.** After the last event the script alarms and speaks every 45s and never stops on its own. **TaskStop on the Monitor task is the only thing that silences it** — call it the moment the cook responds. That TaskStop is also the acknowledgement that the hold is over.
+
+**Extension.** "Go another N minutes" → TaskStop the timer, re-arm with a fresh schedule whose `after` values are shifted by N (drop events already fired), update `phase_end`.
+
+One timer at a time. TaskStop the old one before arming a new one, or a stale timer will talk over you.
+
+**Cook away from the screen** (they said so, or they're on another floor): also send a PushNotification on `preflight`, `ready-check`, and `complete` wakes, if this session has that tool. Kitchen audio does not carry upstairs.
+
+### Mode 2: Manual (fallback)
+
+Script missing, Monitor unavailable, or the timer sent an `error` → tell the cook to set a phone timer for the remaining hold, record `timer_mode: manual` and the expected end time in the state file, and ask them to tell you when it rings. You still deliver the pre-flight briefing yourself.
 
 ---
 
