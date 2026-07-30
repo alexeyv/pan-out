@@ -218,6 +218,8 @@ rejects("blank speak", event(speak="   "))
 rejects("blank detail", event(detail=""))
 rejects("blank message", event(message=" "))
 rejects("JSON array", '[{"after":1}]')
+rejects("oversized message", event(message="x" * 5000))
+rejects("oversized unknown key", event(zzz="x" * 5000))
 
 kept = ht.parse_schedule(event(fired_at=99, late_by=42))[0].payload
 for key in ("fired_at", "late_by"):
@@ -481,6 +483,69 @@ print("; ".join(out))
 ')
 [ -z "$problems" ] || problem "$problems"
 rm -rf "$WORK/deaf"
+end
+
+begin "audio that runs and fails is reported once, timing unaffected"
+mkdir -p "$WORK/broken"
+cp "$TIMER_SRC" "$WORK/broken/hold-timer.py"
+for stub in chime speak; do
+    printf '#!/bin/sh\nexit 7\n' > "$WORK/broken/$stub.sh"
+    chmod +x "$WORK/broken/$stub.sh"
+done
+START_EPOCH=$(date +%s)
+python3 "$WORK/broken/hold-timer.py" '{"version":1,"events":[
+  {"after":1,"type":"progress","message":"first"},
+  {"after":2,"type":"complete","message":"second"}]}' \
+    --audio-mode tts --tick-seconds 1 --nag-seconds 0 >"$OUT" 2>"$ERR" &
+TIMER_PID=$!
+await_exit 10
+expect_eq 0 "$TIMER_STATUS" "exit status"
+expect_eq 3 "$(count_lines "$OUT")" "stdout lines (2 events + 1 error)"
+expect_ge "$(count_containing "$ERR" 'audio script exited 7')" 2 "per-occurrence stderr detail"
+problems=$(check_events '
+import json, sys
+lines = [json.loads(l) for l in open(sys.argv[1]) if l.strip()]
+start = int(sys.argv[2])
+out = []
+types = [e["type"] for e in lines]
+if types != ["progress", "complete", "error"]:
+    out.append("sequence was %s" % types)
+errors = [e for e in lines if e["type"] == "error"]
+if len(errors) != 1:
+    out.append("%d error lines, wanted exactly 1" % len(errors))
+elif errors[0].get("fatal") is not False:
+    out.append("audio failure marked fatal=%r" % errors[0].get("fatal"))
+for event, after in zip(lines, [1, 2]):
+    slack = event["fired_at"] - (start + after)
+    if not 0 <= slack <= 2:
+        out.append("%s fired %+ds off target" % (event["message"], slack))
+print("; ".join(out))
+')
+[ -z "$problems" ] || problem "$problems"
+rm -rf "$WORK/broken"
+end
+
+begin "oversized schedule fields are rejected before they reach the agent"
+python3 -c "
+import json, sys
+json.dump({'version': 1, 'events': [
+    {'after': 1, 'type': 'progress', 'message': 'x' * 5000}]}, open(sys.argv[1], 'w'))
+" "$WORK/too-big.json"
+python3 "$TIMER" "$WORK/too-big.json" --audio-mode silent >"$OUT" 2>"$ERR"
+expect_eq 1 "$?" "exit status"
+expect_eq 1 "$(count_lines "$OUT")" "stdout line count"
+expect_eq 1 "$(count_containing "$OUT" '"fatal":true')" "fatal error line"
+expect_ge "$(count_containing "$OUT" 'the limit is 4096')" 1 "error names the limit"
+python3 -c "
+import json, sys
+json.dump({'version': 1, 'events': [
+    {'after': 1, 'type': 'progress', 'message': 'ok', 'detail': 'y' * 4000}]},
+    open(sys.argv[1], 'w'))
+" "$WORK/within-cap.json"
+start_timer "$WORK/within-cap.json" --audio-mode silent --tick-seconds 0 --nag-seconds 0
+await_exit 10
+expect_eq 0 "$TIMER_STATUS" "exit status with a 4000-character detail"
+expect_eq 1 "$(count_lines "$OUT")" "stdout lines with a 4000-character detail"
 end
 
 begin "unusable schedules emit one fatal error line and exit 1"
