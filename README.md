@@ -85,7 +85,7 @@ pan-out/
 ├── sessions/               # Cook session state files (gitignored)
 ├── memory/                 # Accumulated lessons and notes (gitignored)
 ├── bin/                    # Utility scripts
-│   └── progress-timer.sh   #   Background timer with spoken updates
+│   └── hold-timer.py       #   Passive-phase timer with spoken updates
 └── test/                   # Test harnesses
 ```
 

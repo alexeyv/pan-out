@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- `bin/hold-timer.py` — passive-phase hold timer that runs under the Claude Code Monitor tool: every event wakes the cook agent directly. Configurable heartbeat tick as a liveness signal, spoken event announcements, a completion alarm that nags until acknowledged, and epoch-anchored timing that detects laptop sleep and reports the gap instead of firing late in silence
+- `test/timer/run-tests.sh` — timer test suite covering event timing, heartbeat, silent mode, suspend/resume gap recovery, nag persistence, and unusable schedules
+
+### Changed
+- Cook skill timer integration rewritten around Monitor: the timer wakes the agent instead of the agent polling for events. Acknowledging a finished hold and extending one are both TaskStop plus re-arm
+- Passive-phase timer modes reduced from three to two — Monitor-driven and manual phone timer
+- `timer_mode` state values are now `monitor-timer | manual`
+
+### Removed
+- Kicker timer stack: `bin/kicker.py`, `bin/poll-adapter.py`, `bin/progress-timer.sh`, and `kicker-protocol.md`. The file-based schedule/events/control protocol existed because nothing could wake a sleeping agent; Monitor can, so the whole layer is gone
+
 ## [0.1.2] - 2026-03-24
 
 ### Changed

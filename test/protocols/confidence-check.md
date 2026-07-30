@@ -37,7 +37,7 @@ Find your couch. Prepare your coffee. Sit down. This is the hardest phase — th
 The passive hold. This is where you find out whether the skill can count, talk, and remember you exist — all at once. A low bar, but one it has historically tripped over.
 
 - Set a 5-minute timer. Walk away from the screen (or stay — your call).
-- Observe: does the kicker ping you? Does TTS work? Does the status banner update?
+- Observe: does the timer ping you? Does TTS work? Does the status banner update?
 - At ~T-2 minutes, you should receive a pre-flight briefing for Phase 3. If the skill tells you to preheat a cast iron pan, something has gone wrong.
 - At ~T-1 minute, you should receive a ready check.
 - At T+0, the timer fires and the skill should transition you to Phase 3.
@@ -71,7 +71,7 @@ Do not spill hot coffee on yourself. The cook skill is not certified to provide 
 | Problem | Cause | Diagnostic Cue | Fix |
 |---|---|---|---|
 | No TTS audio | speak.sh missing or audio off | Silence when expected | Check audio settings, fall back to chime |
-| Kicker never pings | Kicker agent not spawned or crashed | No messages during Phase 2 | Check team task list, fall back to manual timer |
+| Timer never pings | Timer not armed, or it died | No messages during Phase 2 | Check the Monitor task, fall back to a manual phone timer |
 | Timer doesn't fire | Timer script missing or PID died | Phase 2 never ends | Check process list, restart manually |
 | Coffee cold | Phase 2 too long | Lukewarm sip | Microwave 30s |
 | Cook fell asleep | Couch too comfortable | Missed timer | Set phone alarm as backup |

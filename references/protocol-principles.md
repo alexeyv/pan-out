@@ -57,4 +57,4 @@ If a passive phase (braise, rest, sous vide hold, marinate) doesn't specify a du
 
 Every passive phase gets a timer. If the duration is genuinely variable (e.g., "braise until fork-tender"), specify a range with a check interval: `timer_seconds: 5400` with a note to check at 60 and 75 minutes.
 
-*Learned: sous vide chicken protocol — passive hold phase needed explicit timer_seconds for the kicker agent to schedule countdown pings and the ready check. Without it, the cook skill had no anchor for phase timing.*
+*Learned: sous vide chicken protocol — passive hold phase needed explicit timer_seconds for the timer to schedule countdown pings and the ready check. Without it, the cook skill had no anchor for phase timing.*
