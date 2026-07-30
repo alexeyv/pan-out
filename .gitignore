@@ -20,6 +20,7 @@ docs/Gemfile.lock
 
 # === Python bytecode ===
 __pycache__/
+*.pyc
 
 # === OS ===
 .DS_Store
