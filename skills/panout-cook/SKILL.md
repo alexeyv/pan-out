@@ -184,6 +184,8 @@ The script counts wall-clock time and owns the audio; every line it prints to st
    ```
    `--audio-mode` mirrors `audio_mode` from the state file (`tts` | `chime` | `silent`). The heartbeat tick is 60s by default — that soft tick is the cook's proof the timer is alive. `--tick-seconds 0` for a quiet hold (overnight, sleeping household).
 
+   Say this out loud when the cook picks `silent` for a long hold: ticks are audio-only and never reach stdout, so between events a silent hold offers nobody — not the cook, not you — any proof of life. A 10-minute hold has no event at all in its first five minutes.
+
 3. **Record** `timer_mode: monitor-timer` and `timer_task_id: {the Monitor task ID}` in the state file. Then tell the cook they can walk away and deliver the pre-flight for the NEXT phase.
 
 **On each wake**, act on `type`:
@@ -198,13 +200,33 @@ The script counts wall-clock time and owns the audio; every line it prints to st
 | `gap` | real time passed with the timer stopped — recompute remaining time from the wall clock, give the cook the corrected number, then handle the overdue events that follow. Negative `seconds` means the clock stepped backwards and the timer re-anchored itself; remaining time is still right, any absolute time you announced earlier is not |
 | `error` | `fatal: true` → the timer is dead: announce it and fall back to Mode 2 for the rest of the hold. `fatal: false` → it is still counting but degraded (usually audio the cook will never hear): tell the cook, and voice every event yourself from here |
 
-Event lines carry `late_by` (seconds) when they fired late. Announce the corrected time, never the scheduled one.
+**Never read an event's numbers out verbatim.** `late_by` (present when the script itself fired late) covers the script's punctuality and nothing else — your own delay between the wake and speaking is invisible to it, and measured 12-30s typical, 111s worst case. Recompute remaining time at the moment you speak, from `phase_end − now`, and use `late_by` as the explanation you give the cook ("the machine was asleep") rather than the correction itself.
+
+**Superseded countdowns.** If several `countdown` events arrive in one wake, act only on the latest and drop the rest. Announcing "three minutes left" and then "two minutes left" a second apart is worse than saying nothing, and a question attached to the older ping has already missed its moment.
+
+**Establishing t0.** `after` is seconds from the *process* start, which lands several seconds (measured 7-12s) after your Monitor call returns — so your own `date +%s` at arming is not t0. Any event line recovers it exactly: `t0 = fired_at − late_by − after`, treating an absent `late_by` as 0. Use that for extension arithmetic, and treat any absolute clock time you announce before the first event ("done at 2:47") as approximate.
 
 **Silencing the alarm.** After the last event the script alarms and speaks every 45s and never stops on its own. **TaskStop on the Monitor task is the only thing that silences it** — call it the moment the cook responds, then null out `timer_task_id`. That TaskStop is also the acknowledgement that the hold is over.
 
-**Extension.** "Go another N minutes" → TaskStop, then re-arm from a fresh schedule with the *same flags as the original* (`--audio-mode`, `--tick-seconds`, `--nag-seconds`, `--label`) — a quiet overnight hold must not come back as chatty. Shift the unfired events by N, clamp any shifted `after` below 5 to 5, and drop non-positive ones except `complete`. Update `phase_end`. If `complete` already fired, don't re-arm the old schedule — rebuild offsets from the new remaining time. Never arm an empty event list; the script rejects it and exits.
+**Extension.** "Go another N minutes" → TaskStop, then re-arm from a fresh schedule with the *same flags as the original* (`--audio-mode`, `--tick-seconds`, `--nag-seconds`, `--label`) — a quiet overnight hold must not come back as chatty.
 
-**Timer death.** On any wake or cook message, if now is past `phase_end` and no `complete` event ever arrived, assume the timer died: check the Monitor task, then re-arm for the remaining time or fall back to Mode 2. A stale `timer_task_id` with nothing running looks exactly like a healthy hold.
+A re-armed process starts its own clock at zero, so **recompute every offset, never shift it**:
+
+```
+new_after = old_after − elapsed + N        elapsed = now − t0
+```
+
+A 75s hold with `complete` at +75, extended by 30s at elapsed 49s: `75 − 49 + 30 = 56`, so `complete` goes at +56. Shifting instead (`75 + 30 = 105`) fires 49s late — late by exactly the elapsed hold, which is 80 minutes on a 90-minute bath extended at minute 80, and nothing in the output would reveal it because the script is punctual against its own start.
+
+Then clamp any result below 5 to 5, drop non-positive ones except `complete`, and update `phase_end`. If `complete` already fired, don't reuse the old schedule at all — rebuild offsets from the new remaining time. Never arm an empty event list; the script rejects it and exits.
+
+**Timer death.** On any wake or cook message, if now is past `phase_end` and no `complete` event ever arrived, assume the timer died, then re-arm for the remaining time or fall back to Mode 2. Three things actually tell you whether it is alive:
+
+- The **harness's own failure notification** — a killed timer surfaces as `status: failed` with the exit code (137 for SIGKILL). This arrives unprompted; you don't have to ask.
+- The **Monitor task's output file**, whose path that notification carries — the script's stderr is in there.
+- **`pgrep -f hold-timer.py`** — the only check that still works after compression buried the notification.
+
+TaskList does not list monitors; it enumerates todo items, so it reports "No tasks found" while a timer is running perfectly well. A stale `timer_task_id` with nothing running looks exactly like a healthy hold.
 
 One timer at a time. TaskStop the old one before arming a new one, or a stale timer will talk over you.
 
