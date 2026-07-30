@@ -18,6 +18,9 @@ docs/.bundle/
 docs/vendor/
 docs/Gemfile.lock
 
+# === Python bytecode ===
+__pycache__/
+
 # === OS ===
 .DS_Store
 Thumbs.db
