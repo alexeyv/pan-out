@@ -38,11 +38,12 @@ The passive hold. This is where you find out whether the skill can count, talk, 
 
 - Set a 5-minute timer. Walk away from the screen (or stay — your call).
 - Observe: does the timer ping you? Does TTS work? Does the status banner update?
-- At ~T-2 minutes, you should receive a pre-flight briefing for Phase 3. If the skill tells you to preheat a cast iron pan, something has gone wrong.
-- At ~T-1 minute, you should receive a ready check.
-- At T+0, the timer fires and the skill should transition you to Phase 3.
+- **Before** you walk away you should already have the pre-flight briefing for Phase 3. A 5-minute hold is too short to carry a separate pre-flight event, so the skill owes it to you at phase entry. If it tells you to preheat a cast iron pan, something has gone wrong.
+- At 1, 2, 3, and 4 minutes: a countdown ping. Four in total — that is what the scheduling rule yields for a 5-minute hold. (The 60-second heartbeat tick is proof-of-life on long holds; here every tick lands on a countdown, so you hear the pings instead.)
+- At T+0 an alarm starts and keeps going until you answer. The persistence is the feature — it must not give up after two announcements.
+- Once you answer, the skill should silence the alarm and move you to Phase 3.
 
-**Simulated sensor poll:** At the midpoint (~2.5 min), the skill should ask "What's your heart rate?" Report any number. This tests the sensor polling flow. If it asks you to pat your heart dry with paper towels, file a bug.
+**Simulated sensor poll:** At one of the middle countdown pings, the skill should ask "What's your heart rate?" Report any number. This tests the sensor polling flow. If it asks you to pat your heart dry with paper towels, file a bug.
 
 ## Phase 3: Reflection (2-3 min, active)
 
@@ -70,9 +71,10 @@ Do not spill hot coffee on yourself. The cook skill is not certified to provide 
 
 | Problem | Cause | Diagnostic Cue | Fix |
 |---|---|---|---|
-| No TTS audio | speak.sh missing or audio off | Silence when expected | Check audio settings, fall back to chime |
+| No TTS audio | speak.sh missing or volume down | Silence when you expect speech | Timer reports a non-fatal error; skill should say so and voice every event itself |
 | Timer never pings | Timer not armed, or it died | No messages during Phase 2 | Check the Monitor task, fall back to a manual phone timer |
-| Timer doesn't fire | Timer script missing or PID died | Phase 2 never ends | Check process list, restart manually |
+| Phase 2 never ends | Timer died and nothing noticed | No alarm past the 5-minute mark | Skill should catch "past phase_end, no complete", then re-arm or go manual |
+| Alarm won't stop | TaskStop never called | Alarm still repeating after you answered | Only TaskStop on the Monitor task silences it — ask the skill to stop it |
 | Coffee cold | Phase 2 too long | Lukewarm sip | Microwave 30s |
 | Cook fell asleep | Couch too comfortable | Missed timer | Set phone alarm as backup |
 | Existential doubt | You're testing an AI by sitting on a couch | Thousand-yard stare | Remember: this is cheaper than burning a steak |

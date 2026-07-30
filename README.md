@@ -51,7 +51,7 @@ Edit `references/cook-profile.md` with your equipment, preferences, and kitchen 
 
 ### Prerequisites
 
-- [Claude Code](https://claude.ai/claude-code) v1.0.33 or later
+- [Claude Code](https://claude.ai/claude-code) v1.0.33 or later. The cook skill's passive-phase timer needs a version whose toolset includes **Monitor** and **TaskStop**; without them, cooking still works but holds fall back to a manual phone timer.
 - An instant-read probe thermometer — for checking liquid temps, meat doneness, and food safety. Practically a must.
 - An infrared (IR) thermometer — point-and-shoot surface temp readings for searing and high-heat work. Really nice to have.
 - A dictation app like [Wispr Flow](https://wisprflow.com) — strongly recommended. Typing mid-cook is slow and distracting; dictation lets you wipe your hands, hold a button, say what you need, and let go — much faster than typing.
@@ -84,10 +84,15 @@ pan-out/
 │   └── calibration.md      #   Your thermometer offsets (personal, gitignored)
 ├── sessions/               # Cook session state files (gitignored)
 ├── memory/                 # Accumulated lessons and notes (gitignored)
-├── bin/                    # Utility scripts
-│   └── hold-timer.py       #   Passive-phase timer with spoken updates
+├── skills/panout-cook/bin/ # Cook skill helper scripts
+│   ├── hold-timer.py       #   Passive-phase timer with spoken updates
+│   ├── chime.sh            #   Alert sounds (the timer calls this)
+│   └── speak.sh            #   Text-to-speech (the timer calls this)
 └── test/                   # Test harnesses
+    └── timer/run-tests.sh  #   Hold-timer test suite
 ```
+
+`hold-timer.py` expects `chime.sh` and `speak.sh` to sit beside it — it resolves them relative to its own directory, so the three move together.
 
 ## Protocols
 
