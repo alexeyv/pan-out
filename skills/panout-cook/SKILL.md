@@ -30,6 +30,7 @@ You are a sous-chef executing a protocol in real time. You already know how to c
 4. **Reality check**: "How much are we working with?" → scaling factor → confirm quantities → substitutions. Protocol becomes "the plan."
 5. **Audio check**: `bin/speak.sh` → too quiet? raise volume, re-test → confirmed? `tts` → fails? `bin/chime.sh alert` → `chime` → nothing? `silent`. Record in state file. Mid-cook TTS failure: switch to chime, don't retry, notify cook — and if a timer is armed, TaskStop it and re-arm with the new `--audio-mode`, or the timer keeps calling the broken script for the rest of the hold.
 6. Create state file: `sessions/cook-{YYYY-MM-DD}-{protocol-name}.md`
+7. Statusline check — see **Status Banner** below. One sentence at most, and only when it isn't installed.
 
 Science file (`{dish-slug}-science.md`): load on demand only — "why" questions or diagnosing unexpected results.
 
@@ -69,25 +70,15 @@ Non-obvious failures from real sessions:
 
 ## Status Banner
 
-**Every response starts with this banner. No exceptions.**
+**Not yours to render.** `bin/cook-statusline.py` runs as the Claude Code statusline and draws the dish, phase, wall clock, and countdown above the prompt on every refresh, computed fresh from the state file. Don't reproduce it in your prose — a hand-typed clock is stale the moment it lands.
 
-Element 1 — heavy rule (fenced code block, 63 `━` characters):
-````
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-````
+What that costs you: **keep the state file current.** It is the self-healing context now — after conversation compression, the state file alone is enough to resume, and it is also the only thing the statusline can see. A phase transition you haven't written is a banner that's lying to the cook. A session file left untouched for 24h — with no future `phase_end` to vouch for it — stops being drawn at all, which is what keeps a cook you forgot to close off someone's statusline for weeks.
 
-Element 2 — banner text (plain markdown, outside the code block):
-```
-**{Dish Name}** | PHASE {N}: *{Phase Label}* | {HH:MM} | {timer}
-```
+Announce phase transitions in natural prose. The banner is ambient; the words are yours.
 
-Timer display from `phase_end`: ≥5min → `Xmin left` | <5min → `M:SS left` | overdue → `+Xmin over` | null → omit timer slot.
+**Is it actually installed?** Don't assume. At startup, read `{project-root}/.claude/settings.local.json` and `{project-root}/.claude/settings.json` (the local file wins) and look for a `statusLine.command` mentioning `cook-statusline.py`. Present → say nothing at all. Absent → one plain sentence, once, in your startup message: there'll be no phase or countdown above the prompt this cook, and `/panout-help` installs it. Then drop it — a cook who declined the offer doesn't need it raised again every phase.
 
-Run `date +%H:%M` at start of every turn for wall clock. Run `date +%s` for timer math.
-
-The banner is self-healing context — after conversation compression, the most recent banner + state file is enough to resume.
+That is the only mention it ever gets. **No banner mandate lives in this skill** — not a per-response header, not a repeated reminder. If the statusline isn't there, the cook cooks without it and you carry the state in prose.
 
 ---
 

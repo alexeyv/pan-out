@@ -37,7 +37,7 @@ Find your couch. Prepare your coffee. Sit down. This is the hardest phase — th
 The passive hold. This is where you find out whether the skill can count, talk, and remember you exist — all at once. A low bar, but one it has historically tripped over.
 
 - Set a 5-minute timer. Walk away from the screen (or stay — your call).
-- Observe: does the timer ping you? Does TTS work? Does the status banner update?
+- Observe: does the timer ping you? Does TTS work? If you installed the cook statusline, does the line above the prompt track the phase and count down? (No statusline, no finding — the skill stopped drawing that banner in its replies on purpose.)
 - **Before** you walk away you should already have the pre-flight briefing for Phase 3. A 5-minute hold is too short to carry a separate pre-flight event, so the skill owes it to you at phase entry. If it tells you to preheat a cast iron pan, something has gone wrong.
 - At 1, 2, 3, and 4 minutes: a countdown ping. Four in total — that is what the scheduling rule yields for a 5-minute hold. (The 60-second heartbeat tick is proof-of-life on long holds; here every tick lands on a countdown, so you hear the pings instead.)
 - At T+0 an alarm starts and keeps going until you answer. The persistence is the feature — it must not give up after two announcements.
