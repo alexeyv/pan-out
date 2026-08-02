@@ -124,7 +124,7 @@ When scanning for protocols, look for `.md` files (e.g., `beef-stew.md`).
 - **Voice is the headline, screen is the article** — two-sentence voice summaries, full detail on screen
 - **Push when idle, pull when active** — the agent owns the timeline during passive phases
 - **Science serves diagnostics** — understand why, so you can fix what goes wrong
-- **One instruction, one action, one confirmation** — no cognitive overload
+- **Pace to the phase, not the protocol** — confirmations where there's time, one briefing where there isn't
 
 ## Shared References
 

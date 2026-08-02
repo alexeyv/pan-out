@@ -218,8 +218,8 @@ Numbered list with URLs.
 ## Key Conventions
 
 ### Phase Types
-- `active` → Pull mode. Cook is hands-on. One instruction at a time.
-- `passive` → Push mode. Timer-driven. Pre-flight briefings. Cook can leave.
+- `active` → Cook is hands-on. The cook skill paces to the phase's own step durations — confirmations where there's time, one briefing where waiting would cost food.
+- `passive` → Timer-driven. Pre-flight briefings. Cook can leave.
 
 ### Optional Phases
 A phase may carry `optional: true` in the front matter phases list. When the cook skill encounters an optional phase, it must:

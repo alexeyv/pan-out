@@ -37,29 +37,23 @@ Before each phase starts, the skill runs an aviation-style checklist:
 - Equipment you'll need ready
 - Questions? *"Now's the time."*
 
-## Two modes of cooking
-
-The cook skill has two modes, and it switches between them automatically based on what the protocol says about each phase.
+## While you cook
 
 {: .blue }
-> ### Pull mode — you're at the stove
+> ### Hands on
 >
-> Active phases (prep, sear, saute) run in pull mode. The skill gives you **one instruction at a time** and waits for you to confirm before moving on.
+> Prep, sear, saute. The skill talks you through the work and paces itself to the cooking — you're never left waiting on a reply while something's on the heat.
 >
 > > *Voice: "Sear the first batch — 10 to 12 cubes, 90 seconds per face."*
 > >
 > > Screen shows the full detail: batch size, sensory cue ("mahogany brown crust, releases from pan without sticking"), the science behind why crowding kills the sear.
-> >
-> > You do the step, say "done" or "next."
-> >
-> > The skill advances. *"Step 3 of 5. Remove the beef, saute the onions in the fond."*
 >
 > If you ask a question mid-step — "what's an oblique cut?" — the skill answers immediately, with a full mechanical how-to, then picks up where you left off. Questions always take priority over advancing the protocol.
 
 {: .yellow }
-> ### Push mode — you can walk away
+> ### Hands off
 >
-> Passive phases (braise, rest, marinate) run in push mode. A timer starts in the background, and the skill tells you what to expect:
+> Braise, rest, marinate. A timer starts in the background, and the skill tells you what to expect:
 >
 > > *Voice: "Braise is on. Timer set for 90 minutes. You can walk away — I'll call you back for a lid-lift check."*
 >

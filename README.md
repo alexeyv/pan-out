@@ -92,7 +92,7 @@ Protocols are structured recipe files that hold the full plan for cooking a dish
 
 ### Hands-on vs. hands-off
 
-- **When you're at the stove** (prep, searing) -- one instruction at a time, waits for you to say "done" before moving on
+- **When you're at the stove** (prep, searing) -- it talks you through the work, paced so you're never waiting on it with a pan on the heat
 - **When you can walk away** (braising, resting) -- a timer runs in the background and calls you back when something needs attention
 
 ### Temperature guidance
