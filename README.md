@@ -25,14 +25,9 @@ In any Claude Code session:
 /plugin install pan-out@pan-out-marketplace
 ```
 
-Then create your personal reference files:
+Then go to the directory where you keep your cooking — the one holding `protocols/`, `sessions/` and `memory/` — and run `/panout-help`. It asks about your kitchen and writes `cook-profile.md` there, then offers to walk you through calibrating your thermometers into `calibration.md`.
 
-```
-cp references/cook-profile.example.md references/cook-profile.md
-cp references/calibration.example.md references/calibration.md
-```
-
-Edit `references/cook-profile.md` with your equipment, preferences, and kitchen environment. If you have temperature instruments, run a boiling-water calibration and fill in `references/calibration.md`. See the [kitchen setup guide](https://panout.org/setup.html) for details.
+Both files live in your cooking directory, not in the plugin — that is where every skill reads them from. To write them by hand instead, `references/cook-profile.example.md` and `references/calibration.example.md` show the structure. See the [kitchen setup guide](https://panout.org/setup.html) for details.
 
 ### From Source
 
@@ -41,13 +36,8 @@ Edit `references/cook-profile.md` with your equipment, preferences, and kitchen 
    ```
    claude --plugin-dir ./pan-out
    ```
-3. Copy and customize your personal reference files:
-   ```
-   cp references/cook-profile.example.md references/cook-profile.md
-   cp references/calibration.example.md references/calibration.md
-   ```
-4. Edit `references/cook-profile.md` with your equipment, preferences, and kitchen environment
-5. If you have temperature instruments, run a boiling-water calibration and fill in `references/calibration.md`
+3. From your cooking directory, run `/panout-help`. It writes `cook-profile.md` there from a short interview about your kitchen, and offers to calibrate your thermometers into `calibration.md`
+4. To write those two by hand instead, copy `references/cook-profile.example.md` and `references/calibration.example.md` into that same directory as `cook-profile.md` and `calibration.md`
 
 ### Prerequisites
 

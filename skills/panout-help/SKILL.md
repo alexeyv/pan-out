@@ -105,12 +105,17 @@ Think of the protocol as a flight plan — the cook skill is the autopilot that 
 ## Project Layout
 
 ```
-{project-root}/protocols/    ← Cooking protocols (.md files)
-{project-root}/sessions/     ← Cook session state files
-{project-root}/memory/       ← Persistent lessons & calibration
-{project-root}/config/       ← Equipment & preferences
-{project-root}/skills/       ← Skill definitions (this is one)
+{project-root}/cook-profile.md  ← This kitchen: equipment, preferences, household
+{project-root}/calibration.md   ← Sensor offsets for this cook's thermometers
+{project-root}/protocols/       ← Protocols ({dish}.md) and their science files
+{project-root}/sessions/        ← Cook session state, one file per cook
+{project-root}/memory/          ← Lessons, equipment quirks, proficiency
+{project-root}/media/           ← Cook photos and reference images
+{project-root}/sensor-logs/     ← Time-series sensor data
+{project-root}/meals/           ← Multi-dish coordination plans
 ```
+
+Everything above belongs to the cook and lives in their directory. The skills themselves — this file included — live in the installed plugin at `{installed_path}`, which the cook never edits.
 
 When scanning for protocols, look for `.md` files (e.g., `beef-stew.md`).
 
@@ -123,10 +128,12 @@ When scanning for protocols, look for `.md` files (e.g., `beef-stew.md`).
 
 ## Shared References
 
-All skills share a common knowledge base at project root `references/`:
+Two documents ship with the plugin and read the same in every kitchen:
 - **[Protocol format](../../references/protocol-format.md)** — what a protocol is, how it's structured, and why it's personal to this kitchen
-- **`{project-root}/calibration.md`** — sensor offsets for this cook's equipment
 - **[Food safety](../../references/food-safety.md)** — FDA/USDA temperature minimums
+
+One belongs to the cook and lives in their own directory:
+- **`{project-root}/calibration.md`** — sensor offsets for this cook's equipment
 
 When the cook asks about protocols, how things work, or what the skills do, consult these references for accurate answers.
 

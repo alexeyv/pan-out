@@ -2,10 +2,7 @@
 
 Your personal cooking profile. The skills read this to tailor guidance to your equipment, experience, and preferences.
 
-Copy this file to `cook-profile.md` and fill in your details:
-```
-cp references/cook-profile.example.md references/cook-profile.md
-```
+Copy this file to `cook-profile.md` in your cooking directory — the one holding `protocols/`, `sessions/` and `memory/` — and fill in your details. That is where the skills read it from. Or run `/panout-help` and let it write the file for you.
 
 ## Background
 - Your cooking experience level and background

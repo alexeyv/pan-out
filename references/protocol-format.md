@@ -278,6 +278,3 @@ revision_history:
 - `evidence` — the observation or cook feedback that justified the change
 
 **Any skill that modifies a protocol MUST append a `revision_history` entry.** This includes the debrief skill (post-cook updates), the recipe skill (refine mode), or any other skill that changes protocol values. Entries are never removed — they form an audit trail.
-
-### Backward Compatibility
-Protocols are always `.md`.
