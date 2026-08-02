@@ -280,4 +280,4 @@ revision_history:
 **Any skill that modifies a protocol MUST append a `revision_history` entry.** This includes the debrief skill (post-cook updates), the recipe skill (refine mode), or any other skill that changes protocol values. Entries are never removed — they form an audit trail.
 
 ### Backward Compatibility
-The cook skill supports both `.md` and `.yaml` protocol formats. When loading a protocol, it tries `.md` first, then falls back to `.yaml`. New protocols are always created as `.md`.
+Protocols are always `.md`.

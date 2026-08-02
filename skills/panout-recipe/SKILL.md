@@ -33,7 +33,7 @@ You produce two artifacts per dish:
 - **Interactive, not autonomous.** The cook reviews research before protocol compilation. Key structural decisions (phase count, sear vs. no sear, seasoning strategy) are negotiated, not dictated.
 - **Clarify, don't guess.** When the cook's intent is ambiguous — dish variant, technique preference, scope — ask. A quick clarifying question beats a wrong assumption that compounds through research and compilation. Keep asking until the target is clear.
 - **Protocol format compliance.** Strict adherence to [protocol-format.md](../../references/protocol-format.md). The cook skill consumes the output without modification.
-- **Actual temperatures only.** Protocols store true target temperatures. Calibration is applied at runtime by the cook skill from [calibration.md](../../references/calibration.md).
+- **Actual temperatures only.** Protocols store true target temperatures. Calibration is applied at runtime by the cook skill from `{project-root}/calibration.md`.
 - **No TTS or timers.** This is a planning skill, not an execution skill. Save voice and timers for the cook skill.
 - **Progressive disclosure.** Don't dump everything at once. Each phase of the workflow presents its output, gets feedback, then proceeds.
 
@@ -214,7 +214,7 @@ All temperature targets in the protocol are **actual/true temperatures** — wha
 
 In the body, use bold format: `**Target: 90°C (TC)**`
 
-**Do not bake calibration offsets into protocols.** Calibration is instrument-specific, approximate (linear scale, not constant offset), and drifts over time. The cook skill reads [calibration.md](../../references/calibration.md) at runtime and presents both values: "We want 90°C (about 86-87°C on your thermocouple)." Protocols stay correct even when instruments are recalibrated or replaced.
+**Do not bake calibration offsets into protocols.** Calibration is instrument-specific, approximate (linear scale, not constant offset), and drifts over time. The cook skill reads `{project-root}/calibration.md` at runtime and presents both values: "We want 90°C (about 86-87°C on your thermocouple)." Protocols stay correct even when instruments are recalibrated or replaced.
 
 ### 12. Validate Food Safety
 Cross-check all temperature targets against [food-safety.md](../../references/food-safety.md):
@@ -362,7 +362,7 @@ When Phase 1 finds related protocols (same technique, protein, or structure):
 ## References
 
 - **Protocol format**: See [references/protocol-format.md](../../references/protocol-format.md) — the spec that all protocol Markdown must follow
-- **Calibration data**: See [references/calibration.md](../../references/calibration.md) — read at runtime by the cook skill, not baked into protocols
+- **Calibration data**: See `{project-root}/calibration.md` — read at runtime by the cook skill, not baked into protocols
 - **Food safety**: See [references/food-safety.md](../../references/food-safety.md) — FDA/USDA minimums for all protein temperature targets
 
 ---

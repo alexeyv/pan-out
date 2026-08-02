@@ -63,7 +63,7 @@ Load these four sources — they form the complete picture:
 
 1. **Session state file** (`{project-root}/sessions/cook-*.md`) — the compact structured record. Read this first. It has timestamps, phase logs, sensor readings, deviations, and the protocol reference.
 
-2. **Protocol used** (`{project-root}/protocols/*.md`, or `.yaml` for legacy) — what was planned. The state file's frontmatter names the protocol. Load it to diff planned vs. actual. For `.md` protocols, read both front matter and body.
+2. **Protocol used** (`{project-root}/protocols/*.md`) — what was planned. The state file's frontmatter names the protocol. Load it to diff planned vs. actual. For `.md` protocols, read both front matter and body.
 
 3. **Science file** (`{project-root}/protocols/{dish-slug}-science.md`) — the science arbiter. Read it to understand the physics and chemistry that constrain any proposed protocol changes. Check the `science:` field in the protocol front matter for the filename.
 
@@ -313,7 +313,7 @@ These are conventions, not rigid schema. If a learning doesn't fit neatly, creat
 ## References
 
 - **Protocol format**: See [references/protocol-format.md](../../references/protocol-format.md) — understand protocol structure when proposing updates
-- **Calibration data**: See [references/calibration.md](../../references/calibration.md) — current sensor offsets, referenced when evaluating temperature deviations
+- **Calibration data**: See `{project-root}/calibration.md` — current sensor offsets, referenced when evaluating temperature deviations
 - **Food safety**: See [references/food-safety.md](../../references/food-safety.md) — FDA/USDA minimums, relevant if safety concerns arose during the cook
 
 ---

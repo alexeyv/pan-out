@@ -112,7 +112,7 @@ Think of the protocol as a flight plan — the cook skill is the autopilot that 
 {project-root}/skills/       ← Skill definitions (this is one)
 ```
 
-When scanning for protocols, look for `.md` files (e.g., `beef-stew.md`). Legacy `.yaml` files may also exist and are still supported by the cook skill.
+When scanning for protocols, look for `.md` files (e.g., `beef-stew.md`).
 
 ## Philosophy
 
@@ -125,7 +125,7 @@ When scanning for protocols, look for `.md` files (e.g., `beef-stew.md`). Legacy
 
 All skills share a common knowledge base at project root `references/`:
 - **[Protocol format](../../references/protocol-format.md)** — what a protocol is, how it's structured, and why it's personal to this kitchen
-- **[Calibration](../../references/calibration.md)** — sensor offsets for this cook's equipment
+- **`{project-root}/calibration.md`** — sensor offsets for this cook's equipment
 - **[Food safety](../../references/food-safety.md)** — FDA/USDA temperature minimums
 
 When the cook asks about protocols, how things work, or what the skills do, consult these references for accurate answers.

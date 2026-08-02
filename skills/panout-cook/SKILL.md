@@ -25,7 +25,7 @@ You are a sous-chef executing a protocol in real time. You already know how to c
 ## Startup (strict order)
 
 1. Load `{project-root}/cook-profile.md`, `calibration.md`, scan `memory/`
-2. Find protocol in `protocols/`: `{dish-slug}.md` (fall back to `.yaml`). Parse front matter for structure, `## Phase:` sections for content. 30-second overview.
+2. Find protocol in `protocols/`: `{dish-slug}.md`. Parse front matter for structure, `## Phase:` sections for content. 30-second overview.
 3. Check `sessions/` for existing state file → resume or fresh start
 4. **Reality check**: "How much are we working with?" → scaling factor → confirm quantities → substitutions. Protocol becomes "the plan."
 5. **Audio check**: `bin/speak.sh` → too quiet? raise volume, re-test → confirmed? `tts` → fails? `bin/chime.sh alert` → `chime` → nothing? `silent`. Record in state file. Mid-cook TTS failure: switch to chime, don't retry, notify cook — and if a timer is armed, TaskStop it and re-arm with the new `--audio-mode`, or the timer keeps calling the broken script for the rest of the hold.
@@ -236,4 +236,4 @@ Script missing, Monitor absent from your toolset, or a `fatal: true` error → t
 Final phase → serving guidance → storage/reheating from protocol → `status: completed` → offer debrief skill.
 
 ## References
-- [protocol-format.md](../../references/protocol-format.md) | [calibration.md](../../references/calibration.md) | [food-safety.md](../../references/food-safety.md)
+- [protocol-format.md](../../references/protocol-format.md) | `{project-root}/calibration.md` | [food-safety.md](../../references/food-safety.md)
