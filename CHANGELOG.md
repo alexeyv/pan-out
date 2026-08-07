@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-07
+
 ### Added
 - `bin/hold-timer.py` — passive-phase hold timer that runs under the Claude Code Monitor tool: every event wakes the cook agent directly. Configurable heartbeat tick as a liveness signal, spoken event announcements, a completion alarm that nags until acknowledged, and wall-clock-anchored timing that detects a suspended machine or a stepped clock and reports the gap instead of firing late in silence
 - `test/timer/run-tests.sh` — timer test suite covering event timing, heartbeat, silent mode, suspend/resume gap recovery, nag persistence, and unusable schedules
