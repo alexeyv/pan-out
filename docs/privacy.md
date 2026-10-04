@@ -8,7 +8,9 @@ nav_order: 7
 
 Last updated: October 4, 2026.
 
-Pan Out is an open-source cooking plugin for Claude. It has no Pan Out account system, hosted storage service, or built-in analytics.
+**I do not collect any data from users' computers through Pan Out: no personal data, no telemetry, no analytics, and no usage reports.** Pan Out does not send your cooking files or conversations to me. They are stored in local files in your cooking workspace and read by Claude, not by me.
+
+Pan Out is an open-source cooking plugin for Claude. It has no Pan Out account system or hosted storage service. There is no data collection endpoint operated by me in the plugin.
 
 ## Information used
 
@@ -16,7 +18,7 @@ Pan Out reads and writes files in your cooking workspace to personalize guidance
 
 ## Storage and processing
 
-Pan Out's workspace files are stored in the filesystem of the environment where you run Claude. Pan Out does not upload them to a service operated by its maintainer, and the maintainer does not receive them through ordinary plugin use.
+Pan Out's workspace files are stored in the filesystem of the environment where you run Claude. **I do not receive, access, or store these files.** Pan Out does not upload them to me or to any service I operate.
 
 When Claude reads these files or you share information in a conversation, that content may be sent to and processed by the AI provider running your session. Your provider's privacy policy, account settings, and retention rules apply. Research searches may also send search queries to the search provider. Local file storage does not mean that AI processing stays on your device.
 
