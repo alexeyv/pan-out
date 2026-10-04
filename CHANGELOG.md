@@ -48,7 +48,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.1.1] - 2026-02-27
 
 ### Added
-- Push-mode photo capture skill (`/panout-capture-photo`)
 - Kicker agent for passive phase timers with precision sleep and countdown acceleration
 - Mandatory pre-flight briefing at passive phase entry
 - Status banner and task list formatting during cook sessions

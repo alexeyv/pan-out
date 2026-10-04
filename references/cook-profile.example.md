@@ -28,10 +28,6 @@ Copy this file to `cook-profile.md` in your cooking directory — the one holdin
 - IR thermometer — calibration status
 - See `calibration.md` for calibration data
 
-### Camera (optional)
-- IP Webcam: yes/no
-  # Android app: IP Webcam by Pavel Khlebovich. URL is session-specific — the cook skill will ask at the start of each cook.
-
 ### Prep & Processing
 - Stand mixer, food processor, blender, etc.
 - Kitchen scale (essential for protocols)
