@@ -129,3 +129,7 @@ Pan Out's skill structure, workflow patterns, and prompt language were built wit
 ## License
 
 [MIT](LICENSE)
+
+## Privacy
+
+See the [Privacy policy](https://panout.org/privacy.html) for how Pan Out uses cooking profiles, session files, and other information you provide.
