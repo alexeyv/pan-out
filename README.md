@@ -132,4 +132,4 @@ Pan Out's skill structure, workflow patterns, and prompt language were built wit
 
 ## Privacy
 
-See the [Privacy policy](https://panout.org/privacy.html) for how Pan Out uses cooking profiles, session files, and other information you provide.
+See the [Privacy policy](PRIVACY.md) for how Pan Out uses cooking profiles, session files, and other information you provide.
