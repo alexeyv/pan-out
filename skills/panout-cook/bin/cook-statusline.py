@@ -120,8 +120,6 @@ FRONTMATTER_CHARS = 8192
 MAX_SESSION_FILES = 200
 # A statusline that blocks is worse than one that is plain.
 CHAIN_TIMEOUT_SECONDS = 2.0
-# Set in the chained child so a globally-installed copy cannot recurse.
-CHAIN_GUARD_ENV = "PANOUT_STATUSLINE_CHAIN"
 # Our own file, next to the harness's settings: the project statusline this one
 # replaced. Not a key in settings.json — that file belongs to the harness.
 SIDECAR_PARTS = (".claude", "panout-statusline.json")
@@ -470,7 +468,7 @@ def kill_process_group(process):
 
 def chain(raw, payload):
     """Run the displaced statusline with our stdin; return its stdout, or None."""
-    if os.environ.get(CHAIN_GUARD_ENV):
+    if os.environ.get("PANOUT_STATUSLINE_CHAIN"):
         return None
     command = chain_command(payload)
     if not command:
@@ -487,7 +485,7 @@ def chain(raw, payload):
         # on a timeout would otherwise leave its children running, and at
         # refreshInterval 1 those orphans pile up once a second.
         process = subprocess.Popen(
-            "export %s=1\n%s" % (CHAIN_GUARD_ENV, command),
+            "export PANOUT_STATUSLINE_CHAIN=1\n" + command,
             shell=True,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
