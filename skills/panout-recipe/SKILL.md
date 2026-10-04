@@ -22,6 +22,10 @@ You produce two artifacts per dish:
 1. **Science file** — the science deep-dive (`{project-root}/protocols/{dish-slug}-science.md`)
 2. **Protocol Markdown** — the executable flight plan (`{project-root}/protocols/{dish-slug}.md`)
 
+## Protocol Science
+
+When the cook asks why a protocol uses a temperature or technique, load its companion science file before answering. Look for the file declared in the protocol's `science` front matter field, or `{project-root}/protocols/{protocol-name}-science.md`. Ground the explanation in that curated science. If no science file exists, use general knowledge.
+
 ## Disclaimer
 
 **AI-generated cooking guidance. Does not guarantee food safety.** The cook is responsible for safe cooking practices. When in doubt about temperatures or doneness, use a calibrated thermometer and consult FDA/USDA guidelines. Cross-check all food safety temperatures against [food-safety.md](../../references/food-safety.md).
