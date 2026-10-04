@@ -478,21 +478,20 @@ def chain(raw, payload):
 
     import subprocess  # noqa: PLC0415 — kept off the hot path's import cost
 
-    environment = dict(os.environ)
-    environment[CHAIN_GUARD_ENV] = "1"
     try:
+        # Inherit the process environment normally; only set our recursion guard.
+        # No need to read or copy unrelated environment variables.
         # shell=True because the configured command is a command line, not an
         # argv — a bare name has to resolve through PATH like the harness does.
         # start_new_session gives it its own process group: killing the shell
         # on a timeout would otherwise leave its children running, and at
         # refreshInterval 1 those orphans pile up once a second.
         process = subprocess.Popen(
-            command,
+            "export %s=1\n%s" % (CHAIN_GUARD_ENV, command),
             shell=True,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
-            env=environment,
             start_new_session=True,
         )
     except Exception as exc:  # noqa: BLE001 — OSError, ValueError, anything at all
