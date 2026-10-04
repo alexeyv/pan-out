@@ -137,6 +137,10 @@ One belongs to the cook and lives in their own directory:
 
 When the cook asks about protocols, how things work, or what the skills do, consult these references for accurate answers.
 
+### Protocol Science
+
+When the cook asks why a protocol uses a temperature or technique, load its companion science file before answering. Look for the file declared in the protocol's `science` front matter field, or `{project-root}/protocols/{protocol-name}-science.md`. Ground the explanation in that curated science. If no science file exists, use general knowledge.
+
 ---
 
 > **Closing mandates:** Orient and route. Detect intent before showing the menu. Read complete files. Don't try to cook or research — hand off to the right skill.
