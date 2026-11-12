@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Home
+seo_title: Pan Out (PanOut) — AI Cooking Assistant & Sous-Chef for Claude Code
 nav_order: 1
 ---
 

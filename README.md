@@ -1,5 +1,7 @@
 # Pan Out
 
+**Website: [panout.org](https://panout.org/)**
+
 You want to make a proper bolognese — the kind that actually tastes like it came from a kitchen that knows what it's doing. You don't want to memorize technique details or wing it from a blog recipe. You want to understand the science, hear what to do next without looking at a screen, swap ingredients for what's actually in your fridge, and learn from each cook.
 
 📖 **[Documentation](https://panout.org)** — setup guide, walkthroughs, and reference
